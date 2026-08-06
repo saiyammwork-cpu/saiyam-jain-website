@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Sparkles, MessageSquare, Zap, ExternalLink, ArrowRight, User } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Flame, Copy, Check, ExternalLink, Zap, RefreshCw } from 'lucide-react';
 
 export default function SAMWidget({ setActiveTab }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState(null);
   const [messages, setMessages] = useState([
     {
       sender: 'sam',
-      text: "👋 Hey there! I'm SAM, Saiyam Jain's AI Assistant. How can I help you accelerate your business today?",
-      options: ['What services do you offer?', 'View Client Work', 'Get AI Prompts Vault', 'Contact Saiyam']
+      text: "👋 Hey there! I'm SAM, Saiyam Jain's AI Assistant & Prompt Generator.\n\nAsk me to write any custom AI Prompt for Midjourney, ChatGPT, AI Video, or Coding!",
+      options: ['🎨 Create Midjourney Prompt', '📝 Create ChatGPT Copy Prompt', '🎥 Create AI Video Prompt', '💼 View Saiyam\'s Services']
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+
+  const promptAppUrl = "https://saiyam-prompts.base44.app";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -22,56 +25,136 @@ export default function SAMWidget({ setActiveTab }) {
     scrollToBottom();
   }, [messages, isTyping]);
 
+  const handleCopyPrompt = (idx, text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIdx(idx);
+    setTimeout(() => setCopiedIdx(null), 2500);
+  };
+
+  // Advanced Prompt Generation Engine trained for Midjourney, ChatGPT, AI Video, and Coding
+  const generateAIPrompt = (userQuery) => {
+    const lower = userQuery.toLowerCase();
+    
+    // Extract subject/topic if user provided one
+    let subject = userQuery
+      .replace(/generate|make|create|write|prompt|for|midjourney|chatgpt|sora|runway|a/gi, '')
+      .trim();
+
+    if (!subject || subject.length < 2) {
+      subject = "futuristic brand product showcase";
+    }
+
+    if (lower.includes('midjourney') || lower.includes('image') || lower.includes('picture') || lower.includes('photo') || lower.includes('art') || lower.includes('design')) {
+      return {
+        type: '🎨 Midjourney v6 Photorealistic Prompt',
+        prompt: `Cinematic 8k hyper-detailed studio photograph of ${subject}, premium luxury aesthetic, soft violet rim lighting and cyan ambient reflections, depth of field, 35mm lens, photorealistic, 4k render --ar 16:9 --v 6.0 --style raw`,
+        tip: 'Paste this into Midjourney v6 or Discord. Adjust --ar 9:16 for Instagram Reels / Stories format!'
+      };
+    }
+
+    if (lower.includes('video') || lower.includes('sora') || lower.includes('runway') || lower.includes('ad') || lower.includes('movie') || lower.includes('clip')) {
+      return {
+        type: '🎥 AI Video Prompt (Sora / Runway Gen-2)',
+        prompt: `Dynamic 60fps drone camera orbit around ${subject}, dramatic violet volumetric fog, studio lighting, hyper-realistic physics, cinematic camera movement, smooth 4k pan, 1080p high bitrate`,
+        tip: 'Best used in Runway Gen-2, Luma Dream Machine, or Sora for viral video ad creation!'
+      };
+    }
+
+    if (lower.includes('chatgpt') || lower.includes('copy') || lower.includes('write') || lower.includes('text') || lower.includes('marketing') || lower.includes('sales')) {
+      return {
+        type: '📝 ChatGPT-4o High-Converting Copy Prompt',
+        prompt: `Act as an elite conversion copywriter specializing in ${subject}. Write a 3-part viral marketing framework including: 1) A 3-second visual scroll-stopping hook, 2) Core value proposition with 3 bullet benefits, and 3) A compelling Call-To-Action urging users to comment "START".`,
+        tip: 'Copy and paste into ChatGPT or Claude 3.5 for instant viral copywriting.'
+      };
+    }
+
+    if (lower.includes('code') || lower.includes('dev') || lower.includes('react') || lower.includes('web') || lower.includes('app')) {
+      return {
+        type: '💻 Web & AI Developer Prompt',
+        prompt: `Act as a senior full-stack architect. Write clean, production-ready React code for ${subject} using modern CSS glassmorphism, responsive flex/grid layouts, dark/light theme variables, and accessible keyboard navigation.`,
+        tip: 'Copy into ChatGPT, Claude, or Antigravity AI assistant for clean code generation.'
+      };
+    }
+
+    // Default versatile prompt generator
+    return {
+      type: '✨ Custom Tailored AI Prompt',
+      prompt: `Cinematic 8k hyper-detailed visual representation of ${subject}, ultra-luxurious dark purple and light blue gradient ambient glow, depth of field, photorealistic, studio lighting --ar 16:9 --v 6.0`,
+      tip: 'You can also explore 100+ pre-tested prompts in Saiyam\'s Prompts Vault at saiyam-prompts.base44.app!'
+    };
+  };
+
   const handleSendMessage = (textToSend) => {
     const query = textToSend || inputValue;
     if (!query.trim()) return;
 
-    // Add user message
     const newMessages = [...messages, { sender: 'user', text: query }];
     setMessages(newMessages);
     if (!textToSend) setInputValue('');
     setIsTyping(true);
 
-    // AI Response generation logic
     setTimeout(() => {
       let replyText = "";
+      let generatedObj = null;
       let replyOptions = [];
       const lower = query.toLowerCase();
 
-      if (lower.includes('service') || lower.includes('what do you do') || lower.includes('offer')) {
-        replyText = "Saiyam offers 6 core high-impact digital services:\n1. 💻 Website Building\n2. ⚡ Web Apps Development\n3. 🤖 AI Chatbots & Automations\n4. 📱 Android Apps\n5. 🎥 AI Generated Video ADs\n6. 🖼️ AI Generated Image ADs";
-        replyOptions = ['See Client Work', 'Talk to Saiyam Direct', 'Get AI Prompts Vault'];
-      } else if (lower.includes('prompt') || lower.includes('vault') || lower.includes('instagram')) {
-        replyText = "Looking for AI Prompts from Saiyam's Instagram? You can access our official Prompts Vault directly at saiyam-prompts.base44.app!";
-        replyOptions = ['Go to Prompts Page', 'Ask SAM Another Question'];
-      } else if (lower.includes('client') || lower.includes('work') || lower.includes('portfolio') || lower.includes('past')) {
-        replyText = "Saiyam has built custom digital products and AI solutions for top brands including:\n• Cleanza\n• Jain Bhandar\n• Trilokesh Tours\n• White Hills\n• Balajee Sarees\n• Noarch\n...and many more!";
-        replyOptions = ['View Services & Portfolio', 'Contact Saiyam'];
-      } else if (lower.includes('contact') || lower.includes('hire') || lower.includes('talk') || lower.includes('book')) {
-        replyText = "You can reach Saiyam directly via Instagram @saiyam.io or YouTube @saiyam_io. Or fill out our Contact form for priority project onboarding!";
+      const isPromptRequest = lower.includes('prompt') || lower.includes('make') || lower.includes('generate') || 
+                              lower.includes('create') || lower.includes('midjourney') || lower.includes('chatgpt') || 
+                              lower.includes('sora') || lower.includes('video') || lower.includes('image') || lower.includes('write');
+
+      if (isPromptRequest && !lower.includes('service') && !lower.includes('client') && !lower.includes('contact')) {
+        generatedObj = generateAIPrompt(query);
+        replyText = `✨ **Here is your custom-engineered AI Prompt!**\n\nType of Prompt: ${generatedObj.type}`;
+        replyOptions = ['🎨 Another Image Prompt', '📝 Copywriting Prompt', '🎥 Video Ad Prompt', '🔥 Prompts Vault App'];
+      } else if (lower.includes('service') || lower.includes('offer') || lower.includes('build')) {
+        replyText = "Saiyam Jain offers 6 core high-impact services:\n1. 💻 Website Building\n2. ⚡ Web Apps Development\n3. 🤖 AI Chatbots & Automations\n4. 📱 Android Apps\n5. 🎥 AI Generated Video ADs\n6. 🖼️ AI Generated Image ADs";
+        replyOptions = ['🎨 Generate Midjourney Prompt', '🏢 View Client Work', '📬 Contact Saiyam'];
+      } else if (lower.includes('client') || lower.includes('work') || lower.includes('cleanza')) {
+        replyText = "Saiyam has built custom websites, apps, and AI systems for top brands including:\n• Cleanza\n• Jain Bhandar\n• Trilokesh Tours\n• White Hills\n• Balajee Sarees\n• Noarch";
+        replyOptions = ['🎨 Create AI Prompt for Brand', '💼 View Services', '📬 Contact Saiyam'];
+      } else if (lower.includes('contact') || lower.includes('hire') || lower.includes('talk')) {
+        replyText = "You can reach Saiyam directly via Instagram @saiyam.io or YouTube @saiyam_io, or fill out the Contact form on our site for priority project onboarding!";
         replyOptions = ['Go to Contact Page', 'Instagram Link'];
       } else {
-        replyText = `Thanks for reaching out! Saiyam specializes in creating high-converting websites, web apps, AI chatbots, Android apps, and viral AI Ads. Would you like to check out his services or view the Prompts Vault?`;
-        replyOptions = ['What services do you offer?', 'Get AI Prompts Vault', 'Contact Saiyam'];
+        generatedObj = generateAIPrompt(query);
+        replyText = `I have engineered a custom AI Prompt based on your message:\n\nType: ${generatedObj.type}`;
+        replyOptions = ['🎨 Create Midjourney Prompt', '📝 Create Copy Prompt', '🔥 Prompts Vault App'];
       }
 
-      setMessages((prev) => [...prev, { sender: 'sam', text: replyText, options: replyOptions }]);
+      setMessages((prev) => [
+        ...prev, 
+        { 
+          sender: 'sam', 
+          text: replyText, 
+          promptObj: generatedObj,
+          options: replyOptions 
+        }
+      ]);
       setIsTyping(false);
-    }, 900);
+    }, 850);
   };
 
   const handleOptionClick = (opt) => {
-    if (opt === 'Go to Prompts Page' || opt === 'Get AI Prompts Vault') {
+    if (opt === '🔥 Prompts Vault App') {
+      window.open(promptAppUrl, '_blank');
+    } else if (opt === 'Go to Prompts Page') {
       setActiveTab('prompts');
       setIsOpen(false);
-    } else if (opt === 'Go to Services Page' || opt === 'What services do you offer?' || opt === 'View Services & Portfolio' || opt === 'See Client Work') {
+    } else if (opt === '💼 View Services' || opt === 'View Services & Portfolio') {
       setActiveTab('services');
       setIsOpen(false);
-    } else if (opt === 'Go to Contact Page' || opt === 'Contact Saiyam' || opt === 'Talk to Saiyam Direct') {
+    } else if (opt === 'Go to Contact Page' || opt === '📬 Contact Saiyam') {
       setActiveTab('contact');
       setIsOpen(false);
     } else if (opt === 'Instagram Link') {
       window.open('https://instagram.com/saiyam.io', '_blank');
+    } else if (opt === '🎨 Create Midjourney Prompt' || opt === '🎨 Another Image Prompt') {
+      handleSendMessage("Generate a Midjourney prompt for a luxury futuristic product");
+    } else if (opt === '📝 Create ChatGPT Copy Prompt' || opt === '📝 Copywriting Prompt') {
+      handleSendMessage("Generate a ChatGPT prompt for viral SaaS landing page copy");
+    } else if (opt === '🎥 Create AI Video Prompt' || opt === '🎥 Video Ad Prompt') {
+      handleSendMessage("Generate an AI Video prompt for a 3D cinematic video ad");
     } else {
       handleSendMessage(opt);
     }
@@ -118,19 +201,24 @@ export default function SAMWidget({ setActiveTab }) {
             background: 'rgba(255, 255, 255, 0.25)',
             padding: '2px 6px',
             borderRadius: '10px',
-            fontWeight: 800
-          }}>AI</span>
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2px'
+          }}>
+            <Sparkles size={10} /> PROMPT AI
+          </span>
         </button>
       )}
 
       {/* Chat Window Box */}
       {isOpen && (
         <div style={{
-          width: '360px',
+          width: '380px',
           maxWidth: 'calc(100vw - 32px)',
-          height: '520px',
-          maxHeight: 'calc(100vh - 100px)',
-          background: 'rgba(11, 15, 26, 0.95)',
+          height: '560px',
+          maxHeight: 'calc(100vh - 90px)',
+          background: 'rgba(11, 15, 26, 0.96)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid rgba(168, 85, 247, 0.35)',
@@ -144,7 +232,7 @@ export default function SAMWidget({ setActiveTab }) {
           {/* Header */}
           <div style={{
             padding: '16px 20px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(56, 189, 248, 0.15))',
+            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(56, 189, 248, 0.2))',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
@@ -165,11 +253,11 @@ export default function SAMWidget({ setActiveTab }) {
               </div>
               <div>
                 <div style={{ color: '#FFF', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  SAM AI Agent <Sparkles size={14} style={{ color: '#38BDF8' }} />
+                  SAM AI Prompt Generator <Sparkles size={14} style={{ color: '#38BDF8' }} />
                 </div>
                 <div style={{ color: '#10B981', fontSize: '0.72rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ width: '6px', height: '6px', backgroundColor: '#10B981', borderRadius: '50%', display: 'inline-block' }} />
-                  Online • Assistant for Saiyam Jain
+                  Online • Midjourney, ChatGPT & Sora AI
                 </div>
               </div>
             </div>
@@ -193,12 +281,12 @@ export default function SAMWidget({ setActiveTab }) {
             </button>
           </div>
 
-          {/* Messages Container */}
+          {/* Messages Stream */}
           <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {messages.map((msg, idx) => (
               <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start' }}>
                 <div style={{
-                  maxWidth: '85%',
+                  maxWidth: '90%',
                   padding: '12px 16px',
                   whiteSpace: 'pre-line',
                   fontSize: '0.88rem',
@@ -216,9 +304,54 @@ export default function SAMWidget({ setActiveTab }) {
                   })
                 }}>
                   {msg.text}
+
+                  {/* Render Custom Engineered Prompt Card inside Chat */}
+                  {msg.promptObj && (
+                    <div style={{
+                      marginTop: '12px',
+                      background: 'rgba(5, 7, 14, 0.85)',
+                      border: '1px solid rgba(168, 85, 247, 0.4)',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      fontFamily: 'monospace',
+                      fontSize: '0.82rem'
+                    }}>
+                      <div style={{ color: '#C084FC', fontWeight: 600, wordBreak: 'break-word', lineHeight: '1.5', marginBottom: '10px' }}>
+                        {msg.promptObj.prompt}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px' }}>
+                        <span style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                          💡 {msg.promptObj.tip}
+                        </span>
+
+                        <button
+                          onClick={() => handleCopyPrompt(idx, msg.promptObj.prompt)}
+                          style={{
+                            background: copiedIdx === idx ? '#10B981' : 'linear-gradient(135deg, #8B5CF6, #38BDF8)',
+                            border: 'none',
+                            color: '#FFF',
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            flexShrink: 0
+                          }}
+                        >
+                          {copiedIdx === idx ? <Check size={12} /> : <Copy size={12} />}
+                          {copiedIdx === idx ? 'Copied!' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
 
-                {/* Option Suggestion Chips */}
+                {/* Suggestion Chips */}
                 {msg.options && msg.options.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
                     {msg.options.map((opt, i) => (
@@ -247,7 +380,7 @@ export default function SAMWidget({ setActiveTab }) {
 
             {isTyping && (
               <div style={{ display: 'flex', gap: '6px', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', width: 'fit-content' }}>
-                <span style={{ color: '#38BDF8', fontSize: '0.8rem', fontWeight: 600 }}>SAM is typing...</span>
+                <span style={{ color: '#38BDF8', fontSize: '0.8rem', fontWeight: 600 }}>SAM is engineering your AI prompt...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -258,7 +391,7 @@ export default function SAMWidget({ setActiveTab }) {
             <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"
-                placeholder="Ask SAM anything..."
+                placeholder="Ask SAM to write a prompt for..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 style={{
