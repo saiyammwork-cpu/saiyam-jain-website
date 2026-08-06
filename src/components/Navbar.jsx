@@ -34,7 +34,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme }) 
               height: '34px',
               width: 'auto',
               objectFit: 'contain',
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
+              filter: theme === 'dark' ? 'invert(1)' : 'none',
+              mixBlendMode: theme === 'dark' ? 'screen' : 'multiply',
               transition: 'all 0.3s ease'
             }} 
           />

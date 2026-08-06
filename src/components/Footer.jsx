@@ -24,7 +24,8 @@ export default function Footer({ setActiveTab }) {
                   height: '36px',
                   width: 'auto',
                   objectFit: 'contain',
-                  filter: 'brightness(0) invert(1)'
+                  filter: 'invert(1)',
+                  mixBlendMode: 'screen'
                 }} 
               />
             </div>
