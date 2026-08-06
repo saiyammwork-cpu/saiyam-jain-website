@@ -27,26 +27,17 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme }) 
           onClick={() => handleNavClick('home')}
           style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
         >
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #8B5CF6, #38BDF8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)'
-          }}>
-            <Code2 size={24} color="#FFF" />
-          </div>
-          <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #8B5CF6, #38BDF8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              SAIYAM JAIN
-            </div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em' }}>
-              CONTENT CREATOR & AI DEV
-            </div>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="saiyam.io Logo" 
+            style={{ 
+              height: '34px',
+              width: 'auto',
+              objectFit: 'contain',
+              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
+              transition: 'all 0.3s ease'
+            }} 
+          />
         </div>
 
         {/* Desktop Navigation Links */}

@@ -16,19 +16,17 @@ export default function Footer({ setActiveTab }) {
           
           {/* Col 1: Bio */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, #8B5CF6, #38BDF8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <Code2 size={20} color="#FFF" />
-              </div>
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFF' }}>SAIYAM JAIN</span>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+              <img 
+                src="/logo.png" 
+                alt="saiyam.io Logo" 
+                style={{ 
+                  height: '36px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  filter: 'brightness(0) invert(1)'
+                }} 
+              />
             </div>
             <p style={{ color: '#94A3B8', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '20px' }}>
               Content Creator, Web Developer & AI Automations Specialist crafting high-converting websites, AI chatbots, mobile apps, and viral AI Ads.
