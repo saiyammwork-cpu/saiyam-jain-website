@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Sparkles, Flame, Copy, Check, ExternalLink, Zap, RefreshCw } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Flame, Copy, Check, ExternalLink, Zap, RefreshCw, Terminal } from 'lucide-react';
 
 export default function SAMWidget({ setActiveTab }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       sender: 'sam',
-      text: "👋 Hey! I'm SAM, Saiyam Jain's AI Solution & Troubleshooting Specialist.\n\nStuck on Base44, connecting GitHub, claiming free custom domains, or AI tools? Tell me where you are stuck and I'll give you the exact solution!",
-      options: ['📦 Fix Base44 GitHub Connection', '🌐 Fix Free Custom Domain Issue', '🎨 Generate AI Prompt', '💼 View Saiyam\'s Services']
+      text: "🤖 **I'm SAM, Saiyam Jain's Master AI Architect**\n\nI can write expert prompts for **vibe coding** (Cursor, Bolt, v0, Base44), **Google AI Studio/AI Flow**, **Midjourney v6**, **Sora AI Video**, or solve technical errors & free AI modules!",
+      options: ['⚡ Vibe Coding Prompt', '🧠 Google AI Flow Prompt', '🎨 Midjourney Image Prompt', '🎥 Sora Video Prompt', '🎁 Free AI Modules']
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState(null);
   const messagesEndRef = useRef(null);
 
   const promptAppUrl = "https://saiyam-prompts.base44.app";
@@ -24,42 +25,77 @@ export default function SAMWidget({ setActiveTab }) {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Comprehensive AI Technical Problem Solver
-  const solveTechnicalProblem = (userText) => {
+  const handleCopyPrompt = (idx, text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIdx(idx);
+    setTimeout(() => setCopiedIdx(null), 2500);
+  };
+
+  // Master AI Prompt Architecture Engine
+  const masterAIEngine = (userText) => {
     const lower = userText.toLowerCase();
 
-    // Problem 1: Base44 & GitHub connection / export issues
+    // 1. Vibe Coding Prompt Request (Cursor, Bolt, v0, Lovable, Replit, Base44, Antigravity)
+    if (lower.includes('vibe coding') || lower.includes('cursor') || lower.includes('bolt') || lower.includes('v0') || lower.includes('lovable') || lower.includes('replit') || lower.includes('base44')) {
+      const subject = userText.replace(/vibe coding|prompt|cursor|bolt|v0|lovable|replit|base44|make|generate|write|for|a/gi, '').trim() || "full-stack web app with glassmorphic UI";
+      return {
+        title: "⚡ Expert Vibe Coding Prompt (Cursor / Bolt.new / v0)",
+        prompt: `Act as a principal software architect & UI designer. Build a complete, production-ready web application for "${subject}". Requirements:\n1. Architecture: React 18, Vite, clean component modularity, state hooks.\n2. Design System: Dark luxury theme (#070913), glassmorphic backdrop-filter panels, purple (#8B5CF6) & blue (#38BDF8) accents.\n3. Zero console warnings, responsive layout, full code output.`,
+        tip: "Copy into Cursor AI, Bolt.new, v0.dev, or Replit Agent for instant code generation!"
+      };
+    }
+
+    // 2. Google AI Studio & AI Flow Prompt Request
+    if (lower.includes('google ai') || lower.includes('ai studio') || lower.includes('ai flow') || lower.includes('gemini prompt')) {
+      const subject = userText.replace(/google ai|ai studio|ai flow|gemini|prompt|make|generate|write|for|a/gi, '').trim() || "autonomous reasoning pipeline";
+      return {
+        title: "🧠 Google AI Studio & AI Flow System Instruction Prompt",
+        prompt: `System Instruction for Gemini 1.5 Pro / AI Flow:\nRole: Elite AI Data & Logic Architect.\nTask: Process user input regarding "${subject}" and generate structured JSON output following schema: { "status": "success", "analysis": "...", "actionable_steps": [...] }.\nConstraints: Temperature: 0.2. Output strictly valid JSON.`,
+        tip: "Paste into System Instructions in Google AI Studio or use in Gemini 1.5 Pro AI Flow pipelines!"
+      };
+    }
+
+    // 3. Image Generation Prompt (Midjourney, Flux.1, DALL-E 3, Ideogram)
+    if (lower.includes('picture') || lower.includes('image') || lower.includes('photo') || lower.includes('midjourney') || lower.includes('flux') || lower.includes('ideogram') || lower.includes('art')) {
+      const subject = userText.replace(/picture|image|photo|midjourney|flux|ideogram|art|prompt|make|generate|write|for|a/gi, '').trim() || "futuristic product design concept";
+      return {
+        title: "🎨 Photorealistic Image AI Prompt (Midjourney v6 / Flux.1)",
+        prompt: `Cinematic 8k hyper-detailed studio photograph of ${subject}, luxury aesthetic, soft violet rim light, cyan reflections, depth of field, 35mm lens, photorealistic, 4k render --ar 16:9 --v 6.0 --style raw`,
+        tip: "Works in Midjourney v6, Flux.1, and DALL-E 3. Change --ar 9:16 for Reels format."
+      };
+    }
+
+    // 4. Video Generation Prompt (Sora, Runway Gen-3, Luma, Kling)
+    if (lower.includes('video') || lower.includes('sora') || lower.includes('runway') || lower.includes('luma') || lower.includes('kling') || lower.includes('motion')) {
+      const subject = userText.replace(/video|sora|runway|luma|kling|motion|prompt|make|generate|write|for|a/gi, '').trim() || "sleek product launch advertisement";
+      return {
+        title: "🎥 Cinematic Video AI Prompt (Sora / Runway Gen-3 / Luma)",
+        prompt: `Dynamic 60fps drone camera orbit around ${subject}, cinematic purple & blue volumetric lighting, atmospheric fog, hyper-realistic physics, 4k resolution, smooth pan movement`,
+        tip: "Paste into Runway Gen-3 Alpha, Sora, Luma Dream Machine, or Kling AI for video ads!"
+      };
+    }
+
+    // 5. Free AI Image / Video Modules Inquiry
+    if (lower.includes('free image') || lower.includes('free video') || lower.includes('free ai') || lower.includes('module')) {
+      return {
+        text: "🎁 **Top 100% Free AI Image & Video Modules**:\n\n**Free Image Modules**:\n• **Ideogram.ai**: 25 free daily credits (best text rendering & photorealism).\n• **Leonardo.ai**: 150 free daily tokens for Flux renders.\n• **Flux.1 Schnell on HuggingFace**: Unlimited free open-source image generation.\n\n**Free Video Modules**:\n• **Luma Dream Machine**: Free fast generations with realistic motion.\n• **Kling AI**: Free daily 1080p video credits.\n• **Pika.art**: Free lip-sync & 3D video creation."
+      };
+    }
+
+    // 6. Base44 & GitHub Troubleshooting
     if (lower.includes('base44') || lower.includes('base 44') || (lower.includes('github') && (lower.includes('connect') || lower.includes('link') || lower.includes('app') || lower.includes('stuck') || lower.includes('error') || lower.includes('fail') || lower.includes('issue')))) {
-      return "🛠️ **Solution for Base44 & GitHub Connection Issue**:\n\nIf Base44 is failing to connect or push to your GitHub account:\n\n1. **Re-authorize GitHub**: Go to GitHub -> Settings -> Applications -> Authorized OAuth Apps, find Base44, and click **Revoke Access**. Then return to Base44 and re-connect.\n2. **Manual Repo Creation**: Create a brand new EMPTY repository on [GitHub.com/new](https://github.com/new) first. Paste the new repository URL directly into Base44.\n3. **Direct Export Fix**: Click **Download Code (ZIP)** in Base44 -> Extract files locally -> Open terminal -> Run:\n```bash\ngit init\ngit remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git\ngit branch -M main\ngit push -u origin main\n```";
+      return {
+        text: "🛠️ **Solution for Base44 & GitHub Connection Issue**:\n\n1. **Re-authorize OAuth**: Go to GitHub -> Settings -> Applications -> Authorized OAuth Apps, revoke Base44 access, then re-connect in Base44.\n2. **Manual Repo Link**: Create a new empty repository on GitHub manually first, then paste the HTTPS repository URL into Base44.\n3. **Direct Export Fix**: Download Code ZIP from Base44 -> Extract files -> Run `git init; git remote add origin <URL>; git push -u origin main` in terminal!"
+      };
     }
 
-    // Problem 2: Free Domain Claiming & DNS Propagation
-    if (lower.includes('domain') || lower.includes('freenom') || lower.includes('dns') || lower.includes('cname') || lower.includes('a record') || lower.includes('cloudflare')) {
-      return "🌐 **Solution for Free Custom Domain Setup**:\n\nIf your domain is not working or stuck on verification:\n\n1. **Vercel DNS Setup**: In your Domain Registrar (Cloudflare/Freenom/Namecheap), set:\n   • **A Record**: Host `@` -> Value `76.76.21.21`\n   • **CNAME Record**: Host `www` -> Value `cname.vercel-dns.com`\n2. **Cloudflare Proxy Fix**: Turn Cloudflare proxy **OFF** (change orange cloud to grey cloud) during initial SSL verification.\n3. **Propagation Check**: DNS propagation can take 2-5 minutes. Click Recheck in Vercel domain panel!";
-    }
-
-    // Problem 3: Vercel / Netlify Deployment Errors
-    if (lower.includes('vercel') || lower.includes('netlify') || lower.includes('deploy') || lower.includes('build error') || lower.includes('404')) {
-      return "⚡ **Solution for Vercel / Netlify Build & 404 Errors**:\n\n1. **Build Command**: Set Build Command to `npm run build` or `vite build`.\n2. **Output Directory**: Set Output Directory to `dist` (for Vite/React) or `build` (for CRA).\n3. **404 Route Fix**: Create a `vercel.json` file in root:\n```json\n{\n  \"rewrites\": [{ \"source\": \"/(.*)\", \"destination\": \"/index.html\" }]\n}\n```\n4. Test `npm run build` locally in terminal before pushing to GitHub!";
-    }
-
-    // Problem 4: AI Prompts / Midjourney / ChatGPT
-    if (lower.includes('prompt') || lower.includes('midjourney') || lower.includes('chatgpt') || lower.includes('sora')) {
-      return "✨ **Engineered AI Prompt Solution**:\n\n`Cinematic 8k photograph of a futuristic brand product, soft purple rim light, cyan reflections, studio depth of field, photorealistic --ar 16:9 --v 6.0`\n\nYou can also access 100+ pre-tested prompts at saiyam-prompts.base44.app!";
-    }
-
-    // Problem 5: Client Portfolio (Matched ONLY for explicit portfolio inquiries)
-    if (lower.includes('client portfolio') || lower.includes('past projects') || lower.includes('past work') || lower.includes('cleanza') || lower.includes('jain bhandar') || lower.includes('trilokesh') || lower.includes('white hills') || lower.includes('balajee') || lower.includes('noarch')) {
-      return "🏆 **Saiyam's Client Portfolio**:\n• **Cleanza** (Hygiene portal + AI Support)\n• **Jain Bhandar** (Enterprise catalog)\n• **Trilokesh Tours** (Travel booking)\n• **White Hills** (Luxury real estate)\n• **Balajee Sarees** (Fashion e-commerce)\n• **Noarch** (Architecture studio)";
-    }
-
-    // Problem 6: Services offered
-    if (lower.includes('service') || lower.includes('what do you offer') || lower.includes('hire saiyam')) {
-      return "🛠️ **Saiyam Jain's 6 Core Services**:\n1. 💻 Website Building\n2. ⚡ Web Apps Development\n3. 🤖 AI Chatbots & Automations\n4. 📱 Android Apps\n5. 🎥 AI Generated Video ADs\n6. 🖼️ AI Generated Image ADs";
-    }
-
-    // Default intelligent problem-solver response
-    return `💡 **SAM Solution Assistant**:\n\nI understand you are working on: "${userText}".\n\nTo solve this:\n1. If it's a **Base44 or GitHub error**: Disconnect & re-authorize GitHub in settings, or create a fresh repository on GitHub manually first.\n2. If it's a **Domain / Hosting issue**: Ensure A Record is 76.76.21.21 and CNAME points to Vercel.\n3. If it's an **AI Tool / Prompt request**: Ask me to write a custom prompt or check saiyam-prompts.base44.app!\n\nTell me the exact error message or open SAM Hub (/sam-agent) to scan your screen via Camera!`;
+    // Default Master AI prompt generator
+    const cleanSubject = userText.replace(/generate|make|create|write|prompt|for|a/gi, '').trim() || "futuristic AI technology innovation";
+    return {
+      title: "✨ Master Engineered AI Prompt",
+      prompt: `Act as a world-class AI Specialist. Create a high-converting visual and textual architecture for "${cleanSubject}". Specs: 8k hyper-detailed rendering, studio lighting, depth of field, photorealistic aesthetics, clean structural design system.`,
+      tip: "You can also explore 100+ pre-tested prompts in Saiyam's Prompts Vault at saiyam-prompts.base44.app!"
+    };
   };
 
   const handleSendMessage = (textToSend) => {
@@ -72,15 +108,24 @@ export default function SAMWidget({ setActiveTab }) {
     setIsTyping(true);
 
     setTimeout(() => {
-      const replyText = solveTechnicalProblem(query);
-      let replyOptions = ['📦 Base44 & GitHub Fix', '🌐 Free Custom Domain Setup', '🎨 Generate AI Prompt', '📬 Contact Saiyam'];
+      const result = masterAIEngine(query);
+      let replyText = "";
+      let promptObj = null;
+
+      if (result.prompt) {
+        replyText = `✨ **${result.title}**`;
+        promptObj = result;
+      } else {
+        replyText = result.text || `I understand! As Saiyam's Master AI Architect, I can write prompts for Vibe Coding, Google AI Studio/AI Flow, Midjourney, Sora, or troubleshoot free AI modules. What would you like to build?`;
+      }
 
       setMessages((prev) => [
         ...prev, 
         { 
           sender: 'sam', 
           text: replyText, 
-          options: replyOptions 
+          promptObj: promptObj,
+          options: ['⚡ Vibe Coding Prompt', '🧠 Google AI Flow Prompt', '🎨 Midjourney Prompt', '🎥 Sora Video Prompt'] 
         }
       ]);
       setIsTyping(false);
@@ -88,23 +133,16 @@ export default function SAMWidget({ setActiveTab }) {
   };
 
   const handleOptionClick = (opt) => {
-    if (opt === '🔥 Prompts Vault App') {
-      window.open(promptAppUrl, '_blank');
-    } else if (opt === 'Go to Prompts Page') {
-      setActiveTab('prompts');
-      setIsOpen(false);
-    } else if (opt === '💼 View Saiyam\'s Services' || opt === 'View Services & Portfolio') {
-      setActiveTab('services');
-      setIsOpen(false);
-    } else if (opt === 'Go to Contact Page' || opt === '📬 Contact Saiyam') {
-      setActiveTab('contact');
-      setIsOpen(false);
-    } else if (opt === '📦 Fix Base44 GitHub Connection' || opt === '📦 Base44 & GitHub Fix') {
-      handleSendMessage("I am having an issue connecting Base44 to my GitHub account. How do I fix it?");
-    } else if (opt === '🌐 Fix Free Custom Domain Issue' || opt === '🌐 Free Custom Domain Setup') {
-      handleSendMessage("How do I claim and link a free custom domain to Vercel?");
-    } else if (opt === '🎨 Generate AI Prompt') {
-      handleSendMessage("Generate a Midjourney prompt for a luxury brand product");
+    if (opt === '⚡ Vibe Coding Prompt') {
+      handleSendMessage("Generate a vibe coding prompt for Cursor AI to build a modern web app");
+    } else if (opt === '🧠 Google AI Flow Prompt') {
+      handleSendMessage("Generate a Google AI Studio system instruction prompt for Gemini 1.5 Pro");
+    } else if (opt === '🎨 Midjourney Image Prompt' || opt === '🎨 Midjourney Prompt') {
+      handleSendMessage("Generate a Midjourney prompt for a photorealistic product design");
+    } else if (opt === '🎥 Sora Video Prompt') {
+      handleSendMessage("Generate a Sora AI video prompt for a 3D cinematic video ad");
+    } else if (opt === '🎁 Free AI Modules') {
+      handleSendMessage("What are the best free AI image and video generation modules?");
     } else {
       handleSendMessage(opt);
     }
@@ -156,7 +194,7 @@ export default function SAMWidget({ setActiveTab }) {
             alignItems: 'center',
             gap: '2px'
           }}>
-            <Sparkles size={10} /> AI SOLVER
+            <Sparkles size={10} /> MASTER AI
           </span>
         </button>
       )}
@@ -203,11 +241,11 @@ export default function SAMWidget({ setActiveTab }) {
               </div>
               <div>
                 <div style={{ color: '#FFF', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  SAM AI Solution Specialist <Sparkles size={14} style={{ color: '#38BDF8' }} />
+                  SAM Master AI Specialist <Sparkles size={14} style={{ color: '#38BDF8' }} />
                 </div>
                 <div style={{ color: '#10B981', fontSize: '0.72rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ width: '6px', height: '6px', backgroundColor: '#10B981', borderRadius: '50%', display: 'inline-block' }} />
-                  Online • Base44, GitHub & AI Tech Solver
+                  Online • Vibe Coding, Google AI Studio & Sora
                 </div>
               </div>
             </div>
@@ -254,6 +292,51 @@ export default function SAMWidget({ setActiveTab }) {
                   })
                 }}>
                   {msg.text}
+
+                  {/* Render Custom Engineered Prompt Card inside Chat */}
+                  {msg.promptObj && (
+                    <div style={{
+                      marginTop: '12px',
+                      background: 'rgba(5, 7, 14, 0.85)',
+                      border: '1px solid rgba(168, 85, 247, 0.4)',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      fontFamily: 'monospace',
+                      fontSize: '0.82rem'
+                    }}>
+                      <div style={{ color: '#C084FC', fontWeight: 600, wordBreak: 'break-word', lineHeight: '1.5', marginBottom: '10px' }}>
+                        {msg.promptObj.prompt}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px' }}>
+                        <span style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                          💡 {msg.promptObj.tip}
+                        </span>
+
+                        <button
+                          onClick={() => handleCopyPrompt(idx, msg.promptObj.prompt)}
+                          style={{
+                            background: copiedIdx === idx ? '#10B981' : 'linear-gradient(135deg, #8B5CF6, #38BDF8)',
+                            border: 'none',
+                            color: '#FFF',
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            flexShrink: 0
+                          }}
+                        >
+                          {copiedIdx === idx ? <Check size={12} /> : <Copy size={12} />}
+                          {copiedIdx === idx ? 'Copied!' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
 
                 {/* Suggestion Chips */}
@@ -285,7 +368,7 @@ export default function SAMWidget({ setActiveTab }) {
 
             {isTyping && (
               <div style={{ display: 'flex', gap: '6px', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', width: 'fit-content' }}>
-                <span style={{ color: '#38BDF8', fontSize: '0.8rem', fontWeight: 600 }}>SAM is generating your exact solution...</span>
+                <span style={{ color: '#38BDF8', fontSize: '0.8rem', fontWeight: 600 }}>SAM is engineering your AI prompt...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -296,7 +379,7 @@ export default function SAMWidget({ setActiveTab }) {
             <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"
-                placeholder="Where are you stuck? Ask SAM..."
+                placeholder="Ask SAM for vibe coding, Google AI Studio, Sora..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 style={{
