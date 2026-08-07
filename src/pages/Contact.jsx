@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Mail, Phone, MapPin, Send, MessageSquare, CheckCircle, Sparkles, ExternalLink,
-  CreditCard, QrCode, Copy, Check, Building, ShieldCheck, ArrowRight
+  CreditCard, QrCode, Copy, Check, Building, ShieldCheck, ArrowRight, Zap
 } from 'lucide-react';
 import { InstagramIcon, YoutubeIcon } from '../components/Icons';
 
@@ -24,8 +24,10 @@ export default function Contact() {
     mobileNumber: "+91 9339256592",
     accountHolder: "SAIYAM JAIN",
     ifscCode: "CNRB0001426",
-    upiId: "noarch@ptyes"
+    upiId: "BHARATPE09910636684@yesbankltd"
   };
+
+  const payNowLink = `upi://pay?pa=${bankInfo.upiId}&pn=Saiyam%20Jain&cu=INR`;
 
   const handleCopyBankDetails = () => {
     const text = `Canara Bank A/C Details:
@@ -66,7 +68,7 @@ UPI ID: ${bankInfo.upiId}`;
             Contact & <span className="text-gradient">Payment Details</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', maxWidth: '640px', margin: '14px auto 0 auto', fontSize: '1.05rem', lineHeight: '1.6' }}>
-            Have a project in mind or ready to pay? Send a direct message or scan the Paytm UPI QR code / Bank details below.
+            Have a project in mind or ready to pay? Send a direct message or scan the UPI QR code / Bank details below.
           </p>
         </div>
 
@@ -86,14 +88,14 @@ UPI ID: ${bankInfo.upiId}`;
                 Official Bank & Payment QR Details
               </h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                Direct bank transfer or UPI payment gateway for project milestone payments.
+                Scan the QR code or click the Pay Now button to launch your UPI payment app directly.
               </p>
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'center' }}>
             
-            {/* Paytm UPI QR Code Card */}
+            {/* BharatPe UPI QR Code Card (Cropped Header & Clean Display) */}
             <div style={{
               background: '#FFF',
               borderRadius: '24px',
@@ -103,45 +105,76 @@ UPI ID: ${bankInfo.upiId}`;
               border: '2px solid rgba(56, 189, 248, 0.4)'
             }}>
               <div style={{ color: '#0F172A', fontWeight: 800, fontSize: '1.1rem', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <QrCode size={20} style={{ color: '#00BAF2' }} /> Scan Paytm UPI QR Code
+                <QrCode size={20} style={{ color: '#00BAF2' }} /> Scan UPI QR Code
               </div>
 
+              {/* Clean Cropped QR View (Hiding header text) */}
               <div style={{
-                borderRadius: '16px',
+                width: '260px',
+                height: '270px',
                 overflow: 'hidden',
-                maxWidth: '280px',
+                position: 'relative',
+                borderRadius: '16px',
                 margin: '0 auto 16px auto',
-                border: '1px solid #E2E8F0'
+                border: '1px solid #E2E8F0',
+                background: '#FFF'
               }}>
                 <img 
                   src="/payment-qr.jpg" 
-                  alt="Saiyam Jain Paytm UPI Payment QR Code" 
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                  alt="BharatPe UPI Payment QR Code" 
+                  style={{ 
+                    width: '100%', 
+                    height: 'auto', 
+                    marginTop: '-36px',
+                    display: 'block' 
+                  }}
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <span style={{ color: '#0F172A', fontSize: '0.88rem', fontWeight: 700 }}>UPI ID:</span>
-                <span style={{ color: '#00BAF2', fontWeight: 800, fontSize: '0.95rem' }}>{bankInfo.upiId}</span>
-                <button
-                  onClick={handleCopyUpi}
+              {/* Pay Now Button & UPI ID Bar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+                
+                <a
+                  href={payNowLink}
+                  className="btn-accent"
                   style={{
-                    background: copiedUpi ? '#10B981' : '#0F172A',
-                    color: '#FFF',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '4px 10px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
+                    width: '100%',
+                    justifyContent: 'center',
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontWeight: 800,
+                    fontSize: '0.95rem',
+                    textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #00BAF2, #0052FF)'
                   }}
                 >
-                  {copiedUpi ? <Check size={12} /> : <Copy size={12} />}
-                  {copiedUpi ? 'Copied' : 'Copy UPI'}
-                </button>
+                  ⚡ Pay Now via UPI <ExternalLink size={16} />
+                </a>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ color: '#0F172A', fontSize: '0.82rem', fontWeight: 700 }}>UPI ID:</span>
+                  <span style={{ color: '#0052FF', fontWeight: 800, fontSize: '0.85rem', wordBreak: 'break-all' }}>{bankInfo.upiId}</span>
+                  <button
+                    onClick={handleCopyUpi}
+                    style={{
+                      background: copiedUpi ? '#10B981' : '#0F172A',
+                      color: '#FFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '4px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    {copiedUpi ? <Check size={12} /> : <Copy size={12} />}
+                    {copiedUpi ? 'Copied' : 'Copy UPI'}
+                  </button>
+                </div>
+
               </div>
             </div>
 
@@ -192,8 +225,8 @@ UPI ID: ${bankInfo.upiId}`;
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>Paytm UPI ID</span>
-                    <span style={{ color: '#10B981', fontWeight: 800, fontSize: '0.92rem' }}>{bankInfo.upiId}</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>BharatPe UPI ID</span>
+                    <span style={{ color: '#10B981', fontWeight: 800, fontSize: '0.82rem', wordBreak: 'break-all' }}>{bankInfo.upiId}</span>
                   </div>
                 </div>
               </div>

@@ -92,7 +92,7 @@ export default function SAMWidget({ setActiveTab }) {
     // 7. Payment & Bank Details Inquiry
     if (lower.includes('payment') || lower.includes('bank') || lower.includes('account') || lower.includes('paytm') || lower.includes('upi') || lower.includes('qr') || lower.includes('ifsc') || lower.includes('canara')) {
       return {
-        text: "🏦 **Official Payment & Bank Account Details**:\n\n• **Paytm UPI ID**: `noarch@ptyes`\n• **Bank Name**: Canara Bank\n• **Account Holder**: SAIYAM JAIN\n• **Account Number**: 110265163648\n• **IFSC Code**: CNRB0001426\n• **Mobile Number**: +91 9339256592\n\nYou can also scan the official Paytm UPI QR Code on the Contact page!"
+        text: "🏦 **Official Payment & Bank Account Details**:\n\n• **BharatPe UPI ID**: `BHARATPE09910636684@yesbankltd`\n• **Bank Name**: Canara Bank\n• **Account Holder**: SAIYAM JAIN\n• **Account Number**: 110265163648\n• **IFSC Code**: CNRB0001426\n• **Mobile Number**: +91 9339256592\n\nYou can also click 'Pay Now via UPI' or scan the QR Code on the Contact page!"
       };
     }
 
