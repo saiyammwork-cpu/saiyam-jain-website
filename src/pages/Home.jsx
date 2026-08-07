@@ -19,12 +19,10 @@ export default function Home({ setActiveTab }) {
   ];
 
   const services = [
-    { icon: Globe, title: 'Building Websites', desc: 'Ultra-fast, high-converting responsive websites built with modern UI design systems.', tag: 'Web Dev' },
-    { icon: Code, title: 'Building Web Apps', desc: 'Custom full-stack web applications, SaaS dashboards, and database integrations.', tag: 'Full Stack' },
-    { icon: Bot, title: 'Building AI Chatbots', desc: 'Autonomous AI agents and custom-trained chatbots for customer support & lead capture.', tag: 'AI Solutions' },
-    { icon: Smartphone, title: 'Android Apps', desc: 'Native and cross-platform mobile apps for Android with sleek UI and seamless performance.', tag: 'Mobile Apps' },
-    { icon: Video, title: 'AI Generated Video ADs', desc: 'Viral, studio-quality AI video advertisements designed to maximize ROI and engagement.', tag: 'Viral Ads' },
-    { icon: Image, title: 'AI Generated Image ADs', desc: 'High-definition photorealistic product shots and social ad creatives powered by AI.', tag: 'Visual AI' },
+    { icon: Globe, title: 'Websites (Basic, Standard & Premium)', desc: 'High-converting responsive websites with free domain, SEO, SSL, and AI chatbot options starting @ ₹4,999.', tag: 'From ₹4,999' },
+    { icon: Code, title: 'E-Commerce Store', desc: 'Custom online retail stores with product catalogs, shopping cart, and online payment gateway integration.', tag: 'Custom Quote' },
+    { icon: Video, title: 'AI Generated Video ADs', desc: 'Viral, 1080p studio-quality 45-60s AI video ads with scripting, voiceovers, and sound effects.', tag: '₹1,999 (3 Videos)' },
+    { icon: Image, title: 'AI Generated Image ADs', desc: 'High-definition brand-tailored image ads, posters, and banners with free fonts & elements.', tag: '₹699 (2 Images)' },
   ];
 
   return (

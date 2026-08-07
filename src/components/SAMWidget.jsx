@@ -82,7 +82,21 @@ export default function SAMWidget({ setActiveTab }) {
       };
     }
 
-    // 6. Base44 & GitHub Troubleshooting
+    // 6. Pricing & Package Inquiry
+    if (lower.includes('price') || lower.includes('pricing') || lower.includes('cost') || lower.includes('rate') || lower.includes('package') || lower.includes('how much')) {
+      return {
+        text: "💰 **Official Saiyam Jain Services & Pricing Breakdown**:\n\n💻 **Website Packages**:\n• **BASIC (₹4,999)**: 5 pages, 3-word free domain, SEO, 3-day delivery (3 revisions limit).\n• **STANDARD (₹8,999)**: 8 pages, 2-word domain (.com/.in), Free AI Chatbot, 1 Free Video Ad, 2 Social Posts, SSL, Virtual Visiting Card (10 revisions limit).\n• **PREMIUM (₹11,999)**: 10 pages, Premium Minimalist Design, Free AI Chatbot, 3 Free Video Ads, 4 Social Posts, SSL, CRM Tool, Business Email (15 revisions limit).\n\n🎥 **AI Video ADs**: ₹1,999 for 3 videos (45-60s, 1080p, scripting, voiceover) + ₹799 per extra video.\n🖼️ **AI Image ADs**: ₹699 for 2 images/posters + ₹149 per extra image.\n🛍️ **E-Commerce Store**: Custom quote based on product catalog & payment gateway requirements.\n\n*Note: Pricing is view-only. Direct online ordering is disabled. Visit Contact page to inquire & pay!*"
+      };
+    }
+
+    // 7. Payment & Bank Details Inquiry
+    if (lower.includes('payment') || lower.includes('bank') || lower.includes('account') || lower.includes('paytm') || lower.includes('upi') || lower.includes('qr') || lower.includes('ifsc') || lower.includes('canara')) {
+      return {
+        text: "🏦 **Official Payment & Bank Account Details**:\n\n• **Paytm UPI ID**: `noarch@ptyes`\n• **Bank Name**: Canara Bank\n• **Account Holder**: SAIYAM JAIN\n• **Account Number**: 110265163648\n• **IFSC Code**: CNRB0001426\n• **Mobile Number**: +91 9339256592\n\nYou can also scan the official Paytm UPI QR Code on the Contact page!"
+      };
+    }
+
+    // 8. Base44 & GitHub Troubleshooting
     if (lower.includes('base44') || lower.includes('base 44') || (lower.includes('github') && (lower.includes('connect') || lower.includes('link') || lower.includes('app') || lower.includes('stuck') || lower.includes('error') || lower.includes('fail') || lower.includes('issue')))) {
       return {
         text: "🛠️ **Solution for Base44 & GitHub Connection Issue**:\n\n1. **Re-authorize OAuth**: Go to GitHub -> Settings -> Applications -> Authorized OAuth Apps, revoke Base44 access, then re-connect in Base44.\n2. **Manual Repo Link**: Create a new empty repository on GitHub manually first, then paste the HTTPS repository URL into Base44.\n3. **Direct Export Fix**: Download Code ZIP from Base44 -> Extract files -> Run `git init; git remote add origin <URL>; git push -u origin main` in terminal!"

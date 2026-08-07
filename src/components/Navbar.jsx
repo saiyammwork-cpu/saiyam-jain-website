@@ -6,7 +6,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme }) 
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'services', label: 'Services & Works' },
+    { id: 'services', label: 'Services & Pricing' },
     { id: 'prompts', label: 'Prompts Vault', badge: 'Hot' },
     { id: 'sam', label: 'SAM AI Agent', isAi: true },
     { id: 'contact', label: 'Contact & Hire' },

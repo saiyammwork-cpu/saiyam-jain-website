@@ -76,12 +76,10 @@ export default function Footer({ setActiveTab }) {
 
           {/* Col 2: Services */}
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Our Core Offerings</h4>
+            <h4 style={{ color: '#FFF', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Our Core Services & Pricing</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', color: '#94A3B8', fontSize: '0.9rem' }}>
-              <li>💻 Custom Website Development</li>
-              <li>⚡ Full-Stack Web Applications</li>
-              <li>🤖 AI Chatbots & Automations</li>
-              <li>📱 Android Mobile Apps</li>
+              <li>💻 Websites (Basic, Standard, Premium)</li>
+              <li>🛍️ E-Commerce Online Stores</li>
               <li>🎥 AI Generated Video ADs</li>
               <li>🖼️ AI Generated Image ADs</li>
             </ul>
