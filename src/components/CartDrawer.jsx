@@ -356,13 +356,24 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                   Order ID: <strong style={{ color: '#38BDF8' }}>{placedOrder.id}</strong> • Total Payable: <strong style={{ color: '#10B981' }}>₹{placedOrder.total}</strong>
                 </p>
 
-                {/* QR Code & Pay Link Box */}
+                {/* Dynamic UPI QR Code Box with Pre-filled Amount */}
                 <div style={{ background: '#FFF', borderRadius: '18px', padding: '18px', color: '#0F172A', marginBottom: '16px', border: '2px solid #00BAF2' }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '8px' }}>Scan QR Code or Tap Pay Now</div>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '4px' }}>Scan QR Code via GPay / PhonePe / Paytm</div>
+                  <div style={{ fontSize: '0.78rem', color: '#10B981', fontWeight: 800, marginBottom: '12px' }}>
+                    ⚡ Exact Amount Pre-filled: ₹{placedOrder.total}
+                  </div>
                   
-                  {/* Clean Cropped QR View */}
-                  <div style={{ width: '200px', height: '210px', overflow: 'hidden', margin: '0 auto 12px auto', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                    <img src="/payment-qr.jpg" alt="BharatPe QR Code" style={{ width: '100%', marginTop: '-26px' }} />
+                  {/* Real-time Dynamic UPI QR Code Image */}
+                  <div style={{ width: '210px', height: '210px', margin: '0 auto 14px auto', borderRadius: '14px', overflow: 'hidden', border: '2px solid #00BAF2', background: '#FFF', padding: '8px' }}>
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiPayLink)}`} 
+                      alt={`UPI QR Code for ₹${placedOrder.total}`} 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                      onError={(e) => {
+                        // Fallback to local QR image if offline
+                        e.target.src = "/payment-qr.jpg";
+                      }}
+                    />
                   </div>
 
                   <a
@@ -371,15 +382,15 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                     style={{
                       width: '100%',
                       justifyContent: 'center',
-                      padding: '10px',
-                      borderRadius: '10px',
+                      padding: '12px',
+                      borderRadius: '12px',
                       fontWeight: 800,
-                      fontSize: '0.9rem',
+                      fontSize: '0.92rem',
                       textDecoration: 'none',
                       background: 'linear-gradient(135deg, #00BAF2, #0052FF)'
                     }}
                   >
-                    ⚡ Pay ₹{placedOrder.total} via UPI <ExternalLink size={14} />
+                    ⚡ Pay ₹{placedOrder.total} via UPI Link <ExternalLink size={15} />
                   </a>
 
                   <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '6px', fontWeight: 600 }}>

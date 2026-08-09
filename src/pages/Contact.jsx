@@ -18,6 +18,8 @@ export default function Contact({ setActiveTab }) {
   const [copiedBank, setCopiedBank] = useState(false);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
+  const [customAmount, setCustomAmount] = useState('');
+
   const bankInfo = {
     bankName: "Canara Bank",
     accountNumber: "110265163648",
@@ -27,7 +29,9 @@ export default function Contact({ setActiveTab }) {
     upiId: "BHARATPE09910636684@yesbankltd"
   };
 
-  const payNowLink = `upi://pay?pa=${bankInfo.upiId}&pn=Saiyam%20Jain&cu=INR`;
+  const dynamicPayLink = customAmount 
+    ? `upi://pay?pa=${bankInfo.upiId}&pn=Saiyam%20Jain&am=${customAmount}&cu=INR`
+    : `upi://pay?pa=${bankInfo.upiId}&pn=Saiyam%20Jain&cu=INR`;
 
   const handleCopyBankDetails = () => {
     const text = `Canara Bank A/C Details:
@@ -110,7 +114,7 @@ UPI ID: ${bankInfo.upiId}`;
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', alignItems: 'center' }}>
             
-            {/* BharatPe UPI QR Code Card */}
+            {/* BharatPe UPI QR Code Card with Dynamic Amount Support */}
             <div style={{
               background: '#FFF',
               borderRadius: '20px',
@@ -119,31 +123,53 @@ UPI ID: ${bankInfo.upiId}`;
               boxShadow: '0 15px 40px rgba(0, 0, 0, 0.3)',
               border: '2px solid rgba(56, 189, 248, 0.4)'
             }}>
-              <div style={{ color: '#0F172A', fontWeight: 800, fontSize: '1rem', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <QrCode size={18} style={{ color: '#00BAF2' }} /> Scan UPI QR Code
+              <div style={{ color: '#0F172A', fontWeight: 800, fontSize: '1rem', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <QrCode size={18} style={{ color: '#00BAF2' }} /> Scan Dynamic Amount QR Code
               </div>
 
-              {/* Clean Cropped QR View */}
+              {/* Custom Amount Input Bar */}
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700, marginBottom: '4px' }}>
+                  Enter Amount to Pre-Fill in Scanner App:
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <span style={{ color: '#0F172A', fontWeight: 900, fontSize: '1rem' }}>₹</span>
+                  <input
+                    type="number"
+                    placeholder="Enter amount..."
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    style={{
+                      width: '140px',
+                      padding: '6px 10px',
+                      borderRadius: '8px',
+                      border: '1px solid #CBD5E1',
+                      fontSize: '0.9rem',
+                      fontWeight: 800,
+                      textAlign: 'center',
+                      color: '#0F172A',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Dynamic QR Code Image */}
               <div style={{
-                width: '240px',
-                maxWidth: '100%',
-                height: '250px',
+                width: '210px',
+                height: '210px',
+                margin: '0 auto 12px auto',
+                borderRadius: '14px',
                 overflow: 'hidden',
-                position: 'relative',
-                borderRadius: '16px',
-                margin: '0 auto 14px auto',
-                border: '1px solid #E2E8F0',
-                background: '#FFF'
+                border: '2px solid #00BAF2',
+                background: '#FFF',
+                padding: '8px'
               }}>
                 <img 
-                  src="/payment-qr.jpg" 
-                  alt="BharatPe UPI Payment QR Code" 
-                  style={{ 
-                    width: '100%', 
-                    height: 'auto', 
-                    marginTop: '-32px',
-                    display: 'block' 
-                  }}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dynamicPayLink)}`} 
+                  alt="Dynamic UPI QR Code" 
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                  onError={(e) => { e.target.src = "/payment-qr.jpg"; }}
                 />
               </div>
 
@@ -151,7 +177,7 @@ UPI ID: ${bankInfo.upiId}`;
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
                 
                 <a
-                  href={payNowLink}
+                  href={dynamicPayLink}
                   className="btn-accent"
                   style={{
                     width: '100%',
@@ -164,7 +190,7 @@ UPI ID: ${bankInfo.upiId}`;
                     background: 'linear-gradient(135deg, #00BAF2, #0052FF)'
                   }}
                 >
-                  ⚡ Pay Now via UPI <ExternalLink size={16} />
+                  ⚡ Pay {customAmount ? `₹${customAmount}` : 'via UPI'} <ExternalLink size={16} />
                 </a>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
