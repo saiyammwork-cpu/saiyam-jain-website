@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, X, Plus, Minus, Trash2, ArrowRight, CheckCircle, ExternalLink, QrCode, CreditCard, Sparkles, MessageSquare, Tag, Check, AlertCircle } from 'lucide-react';
+import { subscribeCoupons, createOrderInCloud } from '../services/db';
 
 export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActiveTab }) {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
@@ -10,9 +11,16 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
 
   const upiId = "BHARATPE09910636684@yesbankltd";
   const whatsappPhone = "919339256592";
+
+  // Subscribe to Live Production Coupons
+  useEffect(() => {
+    const unsubscribe = subscribeCoupons(setAvailableCoupons);
+    return () => unsubscribe();
+  }, []);
 
   // Subtotal before discount
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -24,16 +32,12 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
 
   const totalAmount = Math.max(0, subtotal - discountAmount);
 
-  // Load Coupons from localStorage
+  // Validate coupon against production database stream
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     if (!couponInput.trim()) return;
 
-    const savedCoupons = JSON.parse(localStorage.getItem('saiyam_coupons') || 'null') || [
-      { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
-    ];
-
-    const match = savedCoupons.find(
+    const match = availableCoupons.find(
       c => c.code.toUpperCase() === couponInput.trim().toUpperCase() && c.status === 'Active'
     );
 
@@ -85,9 +89,8 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
       upiId: upiId
     };
 
-    // Save to localStorage for Admin Dashboard to read
-    const existingOrders = JSON.parse(localStorage.getItem('saiyam_orders') || '[]');
-    localStorage.setItem('saiyam_orders', JSON.stringify([newOrder, ...existingOrders]));
+    // Save order to Production Database (accessible instantly by Admin Panel on any device)
+    createOrderInCloud(newOrder);
 
     setPlacedOrder(newOrder);
     setCart([]);

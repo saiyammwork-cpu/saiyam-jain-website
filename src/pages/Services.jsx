@@ -1,20 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Globe, Code, Bot, Smartphone, Video, Image, CheckCircle, ArrowRight,
   ShieldCheck, Calculator, Sparkles, Send, Building2, ShoppingBag, Lock, Info, Star, Gift, Check, ArrowUpRight, ShoppingCart, Plus, Minus
 } from 'lucide-react';
+import { subscribePricing } from '../services/db';
 
 export default function Services({ setActiveTab, addToCart, setIsCartOpen }) {
   const [extraVideosCount, setExtraVideosCount] = useState(0);
   const [extraImagesCount, setExtraImagesCount] = useState(0);
+
+  const [pricing, setPricing] = useState({
+    basicPrice: 4999,
+    standardPrice: 8999,
+    premiumPrice: 11999,
+    videoAdsBase: 1999,
+    videoAdsExtra: 799,
+    imageAdsBase: 699,
+    imageAdsExtra: 149
+  });
+
+  useEffect(() => {
+    const unsubscribe = subscribePricing(setPricing);
+    return () => unsubscribe();
+  }, []);
 
   // Websites Pricing Tiers
   const websitePlans = [
     {
       id: 'web-basic',
       name: 'BASIC Website Package',
-      price: 4999,
-      displayPrice: '₹4,999',
+      price: pricing.basicPrice,
+      displayPrice: `₹${pricing.basicPrice.toLocaleString()}`,
       tag: 'Starter Web Solution',
       popular: false,
       features: [
@@ -31,8 +47,26 @@ export default function Services({ setActiveTab, addToCart, setIsCartOpen }) {
     {
       id: 'web-standard',
       name: 'STANDARD Website Package',
-      price: 8999,
-      displayPrice: '₹8,999',
+      price: pricing.standardPrice,
+      displayPrice: `₹${pricing.standardPrice.toLocaleString()}`,
+      tag: 'Starter Web Solution',
+      popular: false,
+      features: [
+        '3 word domain/subdomain (Lifetime Free, e.g. trilok-tours.site.je)',
+        'WordPress / AI generated structure',
+        'Can avail/add AI chatbot @ ₹999 extra',
+        'Delivery Timeline: 3 Days',
+        'SEO Optimization Included',
+        '₹0 Maintenance Cost',
+        '5 Pages (Limit) Website'
+      ],
+      changes: '3 changes allowed only'
+    },
+    {
+      id: 'web-standard',
+      name: 'STANDARD Website Package',
+      price: pricing.standardPrice,
+      displayPrice: `₹${pricing.standardPrice.toLocaleString()}`,
       tag: 'Most Popular Growth Plan',
       popular: true,
       features: [
@@ -53,8 +87,8 @@ export default function Services({ setActiveTab, addToCart, setIsCartOpen }) {
     {
       id: 'web-premium',
       name: 'PREMIUM Website Package',
-      price: 11999,
-      displayPrice: '₹11,999',
+      price: pricing.premiumPrice,
+      displayPrice: `₹${pricing.premiumPrice.toLocaleString()}`,
       tag: 'Ultimate Business Experience',
       popular: false,
       features: [

@@ -4,6 +4,7 @@ import {
   ShieldCheck, ArrowRight, Zap, Lock
 } from 'lucide-react';
 import { InstagramIcon, YoutubeIcon } from '../components/Icons';
+import { createInquiryInCloud } from '../services/db';
 
 export default function Contact({ setActiveTab }) {
   const [formData, setFormData] = useState({
@@ -20,7 +21,6 @@ export default function Contact({ setActiveTab }) {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
-    // Save submission to localStorage so Admin Panel reads it in real-time
     const newInquiry = {
       id: 'INQ-' + Math.floor(100000 + Math.random() * 900000),
       date: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
@@ -31,8 +31,8 @@ export default function Contact({ setActiveTab }) {
       message: formData.message
     };
 
-    const existing = JSON.parse(localStorage.getItem('saiyam_inquiries') || '[]');
-    localStorage.setItem('saiyam_inquiries', JSON.stringify([newInquiry, ...existing]));
+    // Save inquiry to Production Cloud Database (synced across all admin devices)
+    createInquiryInCloud(newInquiry);
 
     setSubmitted(true);
   };

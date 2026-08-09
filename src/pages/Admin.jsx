@@ -1,8 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Lock, ShieldCheck, Package, ListFilter, DollarSign, Settings, MessageSquare, ExternalLink,
   CheckCircle, Clock, Trash2, Edit3, Save, RefreshCw, Key, LogOut, FileText, Globe, Image, Video, AlertTriangle, ArrowRight, UserCheck, Tag, Plus, GraduationCap
 } from 'lucide-react';
+import {
+  subscribeOrders, updateOrderStageInCloud, deleteOrderFromCloud,
+  subscribeCourses, addCourseToCloud, toggleCourseStatusInCloud, deleteCourseFromCloud,
+  subscribeCoupons, saveCouponToCloud, toggleCouponStatusInCloud, deleteCouponFromCloud,
+  subscribeInquiries, deleteInquiryFromCloud,
+  subscribePricing, savePricingToCloud,
+  subscribeMediaLinks, saveMediaLinksToCloud
+} from '../services/db';
 
 export default function Admin() {
   const adminPasswordRequired = "Sam93392s@";
@@ -17,17 +25,11 @@ export default function Admin() {
   // Active Admin Sub-Tab: 'orders' | 'courses' | 'coupons' | 'inquiries' | 'pricing' | 'media'
   const [adminTab, setAdminTab] = useState('orders');
 
-  // Persistent States
+  // Persistent Database States
   const [orders, setOrders] = useState([]);
-  const [inquiries, setInquiries] = useState([]);
-  const [coupons, setCoupons] = useState([
-    { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
-  ]);
   const [courses, setCourses] = useState([]);
-
-  const [newCoupon, setNewCoupon] = useState({ code: '', discount: 10, type: 'percentage', status: 'Active' });
-  const [newCourse, setNewCourse] = useState({ title: '', price: '', link: '', badge: 'Featured', description: '', status: 'Published' });
-
+  const [coupons, setCoupons] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
   const [pricing, setPricing] = useState({
     basicPrice: 4999,
     standardPrice: 8999,
@@ -37,7 +39,6 @@ export default function Admin() {
     imageAdsBase: 699,
     imageAdsExtra: 149
   });
-
   const [mediaLinks, setMediaLinks] = useState({
     upiId: 'BHARATPE09910636684@yesbankltd',
     whatsappPhone: '+91 9339256592',
@@ -47,38 +48,23 @@ export default function Admin() {
     instagram: 'https://instagram.com/saiyam.io'
   });
 
+  const [newCoupon, setNewCoupon] = useState({ code: '', discount: 10, type: 'percentage', status: 'Active' });
+  const [newCourse, setNewCourse] = useState({ title: '', price: '', link: '', badge: 'Featured', description: '', status: 'Published' });
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Real-time Data Sync Function
-  const fetchLiveData = useCallback(() => {
-    const savedOrders = JSON.parse(localStorage.getItem('saiyam_orders') || '[]');
-    const savedInquiries = JSON.parse(localStorage.getItem('saiyam_inquiries') || '[]');
-    const savedCoupons = JSON.parse(localStorage.getItem('saiyam_coupons') || 'null') || [
-      { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
-    ];
-    const savedCourses = JSON.parse(localStorage.getItem('saiyam_courses') || '[]');
-    const savedPricing = JSON.parse(localStorage.getItem('saiyam_pricing') || 'null');
-    const savedMedia = JSON.parse(localStorage.getItem('saiyam_media') || 'null');
-
-    setOrders(savedOrders);
-    setInquiries(savedInquiries);
-    setCoupons(savedCoupons);
-    setCourses(savedCourses);
-    if (savedPricing) setPricing(savedPricing);
-    if (savedMedia) setMediaLinks(savedMedia);
-  }, []);
-
-  // Setup Real-time Live Sync Interval & Storage Listener
+  // Subscribe to Centralized Production Database Streams
   useEffect(() => {
-    fetchLiveData();
-    window.addEventListener('storage', fetchLiveData);
-    const interval = setInterval(fetchLiveData, 1500);
+    const unsubs = [
+      subscribeOrders(setOrders),
+      subscribeCourses(setCourses),
+      subscribeCoupons(setCoupons),
+      subscribeInquiries(setInquiries),
+      subscribePricing(setPricing),
+      subscribeMediaLinks(setMediaLinks)
+    ];
 
-    return () => {
-      window.removeEventListener('storage', fetchLiveData);
-      clearInterval(interval);
-    };
-  }, [fetchLiveData]);
+    return () => unsubs.forEach(unsub => unsub && unsub());
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -96,24 +82,18 @@ export default function Admin() {
     sessionStorage.removeItem('saiyam_admin_auth');
   };
 
-  const updateOrderStage = (orderId, newStage) => {
-    const updated = orders.map(o => o.id === orderId ? { ...o, stage: newStage } : o);
-    setOrders(updated);
-    localStorage.setItem('saiyam_orders', JSON.stringify(updated));
+  const handleUpdateOrderStage = (orderId, newStage) => {
+    updateOrderStageInCloud(orderId, newStage);
   };
 
-  const deleteOrder = (orderId) => {
-    if (window.confirm("Are you sure you want to delete this order record?")) {
-      const updated = orders.filter(o => o.id !== orderId);
-      setOrders(updated);
-      localStorage.setItem('saiyam_orders', JSON.stringify(updated));
+  const handleDeleteOrder = (orderId) => {
+    if (window.confirm("Are you sure you want to delete this order record from the production database?")) {
+      deleteOrderFromCloud(orderId);
     }
   };
 
-  const deleteInquiry = (idx) => {
-    const updated = inquiries.filter((_, i) => i !== idx);
-    setInquiries(updated);
-    localStorage.setItem('saiyam_inquiries', JSON.stringify(updated));
+  const handleDeleteInquiry = (inquiryId) => {
+    deleteInquiryFromCloud(inquiryId);
   };
 
   const handleAddCoupon = (e) => {
@@ -121,68 +101,50 @@ export default function Admin() {
     if (!newCoupon.code.trim()) return;
 
     const formattedCode = newCoupon.code.trim().toUpperCase();
-    const updated = [...coupons.filter(c => c.code !== formattedCode), { ...newCoupon, code: formattedCode }];
-    
-    setCoupons(updated);
-    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+    saveCouponToCloud({ ...newCoupon, code: formattedCode });
     setNewCoupon({ code: '', discount: 10, type: 'percentage', status: 'Active' });
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
   };
 
-  const toggleCouponStatus = (code) => {
-    const updated = coupons.map(c => c.code === code ? { ...c, status: c.status === 'Active' ? 'Disabled' : 'Active' } : c);
-    setCoupons(updated);
-    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+  const handleToggleCouponStatus = (code, status) => {
+    toggleCouponStatusInCloud(code, status);
   };
 
-  const deleteCoupon = (code) => {
-    const updated = coupons.filter(c => c.code !== code);
-    setCoupons(updated);
-    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+  const handleDeleteCoupon = (code) => {
+    deleteCouponFromCloud(code);
   };
 
   const handleAddCourse = (e) => {
     e.preventDefault();
     if (!newCourse.title.trim() || !newCourse.link.trim()) return;
 
-    const courseObj = {
-      id: 'CRS-' + Math.floor(100000 + Math.random() * 900000),
-      ...newCourse
-    };
-
-    const updated = [courseObj, ...courses];
-    setCourses(updated);
-    localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+    addCourseToCloud(newCourse);
     setNewCourse({ title: '', price: '', link: '', badge: 'Featured', description: '', status: 'Published' });
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
   };
 
-  const toggleCourseStatus = (id) => {
-    const updated = courses.map(c => c.id === id ? { ...c, status: c.status === 'Published' ? 'Draft' : 'Published' } : c);
-    setCourses(updated);
-    localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+  const handleToggleCourseStatus = (id, status) => {
+    toggleCourseStatusInCloud(id, status);
   };
 
-  const deleteCourse = (id) => {
-    if (window.confirm("Delete this course link?")) {
-      const updated = courses.filter(c => c.id !== id);
-      setCourses(updated);
-      localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+  const handleDeleteCourse = (id) => {
+    if (window.confirm("Delete this course link from production database?")) {
+      deleteCourseFromCloud(id);
     }
   };
 
-  const savePricingSettings = () => {
-    localStorage.setItem('saiyam_pricing', JSON.stringify(pricing));
+  const handleSavePricing = () => {
+    savePricingToCloud(pricing);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
   };
 
-  const saveMediaSettings = () => {
-    localStorage.setItem('saiyam_media', JSON.stringify(mediaLinks));
+  const handleSaveMedia = () => {
+    saveMediaLinksToCloud(mediaLinks);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
   };
@@ -279,7 +241,7 @@ export default function Admin() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '28px' }}>
           <div>
             <div className="badge-glow" style={{ marginBottom: '8px' }}>
-              <ShieldCheck size={16} style={{ color: '#10B981' }} /> LIVE SYNC ACTIVE • SAIYAM JAIN MASTER ADMIN
+              <ShieldCheck size={16} style={{ color: '#10B981' }} /> CENTRALIZED PRODUCTION DB • SAIYAM JAIN MASTER ADMIN
             </div>
             <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800 }}>
               Management <span className="text-gradient">Dashboard</span>
@@ -290,10 +252,6 @@ export default function Admin() {
             <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '6px 14px', borderRadius: '12px', color: '#10B981', fontWeight: 800, fontSize: '0.85rem' }}>
               💰 Revenue: ₹{totalRevenue.toLocaleString()}
             </div>
-
-            <button onClick={fetchLiveData} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} title="Manual Refresh Data">
-              <RefreshCw size={14} /> Sync Now
-            </button>
 
             <button onClick={handleLogout} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>
               <LogOut size={14} /> Logout
@@ -420,7 +378,7 @@ export default function Admin() {
 
         {savedSuccess && (
           <div style={{ padding: '10px 16px', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '12px', color: '#10B981', fontWeight: 700, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-            <CheckCircle size={16} /> Changes successfully saved and synced!
+            <CheckCircle size={16} /> Changes successfully saved to Cloud Production Database!
           </div>
         )}
 
@@ -431,7 +389,7 @@ export default function Admin() {
               <div className="glass-panel" style={{ padding: '50px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
                 <Package size={40} style={{ opacity: 0.3, margin: '0 auto 12px auto' }} />
                 <h3 style={{ color: 'var(--heading-color)', fontSize: '1.1rem', fontWeight: 800 }}>No Orders Placed Yet</h3>
-                <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Orders placed by clients via cart checkout will automatically sync here in real-time.</p>
+                <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Orders placed by buyers via cart checkout will automatically sync here from the database in real-time.</p>
               </div>
             ) : (
               orders.map((ord) => (
@@ -463,7 +421,7 @@ export default function Admin() {
                         <label style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '2px' }}>Stage Status:</label>
                         <select
                           value={ord.stage}
-                          onChange={(e) => updateOrderStage(ord.id, e.target.value)}
+                          onChange={(e) => handleUpdateOrderStage(ord.id, e.target.value)}
                           style={{
                             background: 'var(--input-bg)',
                             border: '1px solid rgba(168, 85, 247, 0.4)',
@@ -491,7 +449,7 @@ export default function Admin() {
                         <MessageSquare size={13} /> Chat
                       </a>
 
-                      <button onClick={() => deleteOrder(ord.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px' }}>
+                      <button onClick={() => handleDeleteOrder(ord.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px' }}>
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -588,7 +546,7 @@ export default function Admin() {
               </div>
 
               <button type="submit" className="btn-primary" style={{ padding: '10px 20px', alignSelf: 'flex-start', borderRadius: '10px' }}>
-                <Plus size={16} /> Publish Course Link
+                <Plus size={16} /> Publish Course to Database
               </button>
             </form>
 
@@ -612,7 +570,7 @@ export default function Admin() {
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <button
-                        onClick={() => toggleCourseStatus(c.id)}
+                        onClick={() => handleToggleCourseStatus(c.id, c.status)}
                         style={{
                           background: c.status === 'Published' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
                           border: c.status === 'Published' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.4)',
@@ -627,7 +585,7 @@ export default function Admin() {
                         {c.status}
                       </button>
 
-                      <button onClick={() => deleteCourse(c.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                      <button onClick={() => handleDeleteCourse(c.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -681,7 +639,7 @@ export default function Admin() {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <button
-                      onClick={() => toggleCouponStatus(c.code)}
+                      onClick={() => handleToggleCouponStatus(c.code, c.status)}
                       style={{
                         background: c.status === 'Active' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
                         border: c.status === 'Active' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.4)',
@@ -696,7 +654,7 @@ export default function Admin() {
                       {c.status}
                     </button>
 
-                    <button onClick={() => deleteCoupon(c.code)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                    <button onClick={() => handleDeleteCoupon(c.code)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -737,7 +695,7 @@ export default function Admin() {
                         <MessageSquare size={13} /> Chat
                       </a>
                     )}
-                    <button onClick={() => deleteInquiry(idx)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                    <button onClick={() => handleDeleteInquiry(inq.id || idx)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -816,8 +774,8 @@ export default function Admin() {
               </div>
             </div>
 
-            <button onClick={savePricingSettings} className="btn-primary" style={{ padding: '12px 24px' }}>
-              <Save size={16} /> Save Pricing Changes
+            <button onClick={handleSavePricing} className="btn-primary" style={{ padding: '12px 24px' }}>
+              <Save size={16} /> Save Pricing to Database
             </button>
           </div>
         )}
@@ -871,8 +829,8 @@ export default function Admin() {
               </div>
             </div>
 
-            <button onClick={saveMediaSettings} className="btn-primary" style={{ padding: '12px 24px' }}>
-              <Save size={16} /> Save System Links
+            <button onClick={handleSaveMedia} className="btn-primary" style={{ padding: '12px 24px' }}>
+              <Save size={16} /> Save System Links to Database
             </button>
           </div>
         )}

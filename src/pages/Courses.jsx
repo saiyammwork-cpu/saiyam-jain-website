@@ -1,24 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { GraduationCap, ExternalLink, Sparkles, BookOpen, Clock, PlayCircle, ShieldCheck, ArrowRight, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { GraduationCap, ExternalLink, Sparkles, ArrowRight } from 'lucide-react';
+import { subscribeCourses } from '../services/db';
 
 export default function Courses({ setActiveTab }) {
   const [courses, setCourses] = useState([]);
 
-  const fetchCourses = useCallback(() => {
-    const savedCourses = JSON.parse(localStorage.getItem('saiyam_courses') || '[]');
-    setCourses(savedCourses.filter(c => c.status === 'Published'));
-  }, []);
-
   useEffect(() => {
-    fetchCourses();
-    window.addEventListener('storage', fetchCourses);
-    const interval = setInterval(fetchCourses, 1500);
-
-    return () => {
-      window.removeEventListener('storage', fetchCourses);
-      clearInterval(interval);
-    };
-  }, [fetchCourses]);
+    // Subscribe to Centralized Production Database real-time stream
+    const unsubscribe = subscribeCourses((liveCourses) => {
+      setCourses(liveCourses.filter(c => c.status === 'Published'));
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div style={{ paddingTop: '110px', paddingBottom: '90px' }}>
