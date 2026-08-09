@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { 
   Globe, Code, Bot, Smartphone, Video, Image, CheckCircle, ArrowRight,
-  ShieldCheck, Calculator, Sparkles, Send, Building2, ShoppingBag, Lock, Info, Star, Gift, Check, ArrowUpRight
+  ShieldCheck, Calculator, Sparkles, Send, Building2, ShoppingBag, Lock, Info, Star, Gift, Check, ArrowUpRight, ShoppingCart, Plus, Minus
 } from 'lucide-react';
 
-export default function Services({ setActiveTab }) {
+export default function Services({ setActiveTab, addToCart, setIsCartOpen }) {
+  const [extraVideosCount, setExtraVideosCount] = useState(0);
+  const [extraImagesCount, setExtraImagesCount] = useState(0);
+
   // Websites Pricing Tiers
   const websitePlans = [
     {
-      name: 'BASIC',
-      price: '₹4,999',
+      id: 'web-basic',
+      name: 'BASIC Website Package',
+      price: 4999,
+      displayPrice: '₹4,999',
       tag: 'Starter Web Solution',
       popular: false,
       features: [
@@ -24,8 +29,10 @@ export default function Services({ setActiveTab }) {
       changes: '3 changes allowed only'
     },
     {
-      name: 'STANDARD',
-      price: '₹8,999',
+      id: 'web-standard',
+      name: 'STANDARD Website Package',
+      price: 8999,
+      displayPrice: '₹8,999',
       tag: 'Most Popular Growth Plan',
       popular: true,
       features: [
@@ -44,8 +51,10 @@ export default function Services({ setActiveTab }) {
       changes: '10 changes allowed only'
     },
     {
-      name: 'PREMIUM',
-      price: '₹11,999',
+      id: 'web-premium',
+      name: 'PREMIUM Website Package',
+      price: 11999,
+      displayPrice: '₹11,999',
       tag: 'Ultimate Business Experience',
       popular: false,
       features: [
@@ -112,6 +121,36 @@ export default function Services({ setActiveTab }) {
     }
   ];
 
+  const handleAddVideoAdsToCart = () => {
+    const basePrice = 1999;
+    const extraPrice = extraVideosCount * 799;
+    const totalVideoPrice = basePrice + extraPrice;
+    const totalVideos = 3 + extraVideosCount;
+
+    addToCart({
+      id: `ai-video-ads-${extraVideosCount}`,
+      name: `AI Video ADs (${totalVideos} Videos Total)`,
+      price: totalVideoPrice,
+      quantity: 1
+    });
+    setIsCartOpen(true);
+  };
+
+  const handleAddImageAdsToCart = () => {
+    const basePrice = 699;
+    const extraPrice = extraImagesCount * 149;
+    const totalImagePrice = basePrice + extraPrice;
+    const totalImages = 2 + extraImagesCount;
+
+    addToCart({
+      id: `ai-image-ads-${extraImagesCount}`,
+      name: `AI Image ADs (${totalImages} Images/Ads Total)`,
+      price: totalImagePrice,
+      quantity: 1
+    });
+    setIsCartOpen(true);
+  };
+
   return (
     <div style={{ paddingTop: '110px', paddingBottom: '90px' }}>
       
@@ -124,25 +163,8 @@ export default function Services({ setActiveTab }) {
           Core Services & <span className="text-gradient">Pricing Plans</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', maxWidth: '680px', margin: '16px auto 0 auto', fontSize: '1.05rem', lineHeight: '1.6' }}>
-          Transparent pricing for Websites, E-Commerce Stores, AI Video Ads, and AI Image Ads.
+          Select multiple services, add extra ad creatives, and generate your dynamic payment QR & WhatsApp receipt in 1-click!
         </p>
-
-        {/* View-Only Informational Notice */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'rgba(56, 189, 248, 0.12)',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
-          color: '#38BDF8',
-          padding: '8px 18px',
-          borderRadius: '30px',
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          marginTop: '20px'
-        }}>
-          <Lock size={16} /> Note: Pricing is for viewing & inquiry only. Direct online checkout is disabled.
-        </div>
       </section>
 
       {/* SECTION 1: WEBSITES PRICING (BASIC, STANDARD, PREMIUM) */}
@@ -158,9 +180,9 @@ export default function Services({ setActiveTab }) {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'stretch' }}>
-          {websitePlans.map((plan, idx) => (
+          {websitePlans.map((plan) => (
             <div
-              key={idx}
+              key={plan.id}
               className="glass-panel-interactive"
               style={{
                 padding: '36px',
@@ -199,7 +221,7 @@ export default function Services({ setActiveTab }) {
                 </h3>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '24px' }}>
-                  <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFF' }}>{plan.price}</span>
+                  <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFF' }}>{plan.displayPrice}</span>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>INR / One-time</span>
                 </div>
 
@@ -234,13 +256,26 @@ export default function Services({ setActiveTab }) {
                   ⚠️ Revisions: {plan.changes}
                 </div>
 
-                <button
-                  onClick={() => setActiveTab('contact')}
-                  className="btn-primary"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                >
-                  Inquire Package <ArrowRight size={16} />
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    onClick={() => {
+                      addToCart({ id: plan.id, name: plan.name, price: plan.price, quantity: 1 });
+                      setIsCartOpen(true);
+                    }}
+                    className="btn-accent"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                  >
+                    <ShoppingCart size={16} /> Add to Cart & Checkout
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('contact')}
+                    className="btn-secondary"
+                    style={{ width: '100%', justifyContent: 'center', padding: '10px', fontSize: '0.85rem' }}
+                  >
+                    Inquire Package <ArrowRight size={14} />
+                  </button>
+                </div>
               </div>
 
             </div>
@@ -296,9 +331,26 @@ export default function Services({ setActiveTab }) {
                 </div>
               </div>
 
+              {/* Add Extra Videos Counter Selector */}
+              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '14px', borderRadius: '14px', border: '1px solid var(--glass-border)', marginBottom: '20px' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '8px' }}>
+                  Add Extra Videos (+₹799 each):
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '10px' }}>
+                    <button onClick={() => setExtraVideosCount(Math.max(0, extraVideosCount - 1))} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Minus size={14} /></button>
+                    <span style={{ color: '#FFF', fontWeight: 900, fontSize: '0.95rem' }}>+{extraVideosCount} Extra Video(s)</span>
+                    <button onClick={() => setExtraVideosCount(extraVideosCount + 1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Plus size={14} /></button>
+                  </div>
+                  <div style={{ color: '#10B981', fontWeight: 900, fontSize: '1.1rem' }}>
+                    Total: ₹{1999 + (extraVideosCount * 799)}
+                  </div>
+                </div>
+              </div>
+
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
-                  <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> 3 AI Generated Videos Included
+                  <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> {3 + extraVideosCount} AI Generated Videos Included
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
                   <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> 45 - 60 Seconds Duration
@@ -327,11 +379,11 @@ export default function Services({ setActiveTab }) {
               </div>
 
               <button
-                onClick={() => setActiveTab('contact')}
-                className="btn-primary"
+                onClick={handleAddVideoAdsToCart}
+                className="btn-accent"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
-                Inquire Video Ads <ArrowRight size={16} />
+                <ShoppingCart size={16} /> Add Video Ads to Cart
               </button>
             </div>
           </div>
@@ -370,9 +422,26 @@ export default function Services({ setActiveTab }) {
                 </div>
               </div>
 
+              {/* Add Extra Images Counter Selector */}
+              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '14px', borderRadius: '14px', border: '1px solid var(--glass-border)', marginBottom: '20px' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '8px' }}>
+                  Add Extra Images (+₹149 each):
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '10px' }}>
+                    <button onClick={() => setExtraImagesCount(Math.max(0, extraImagesCount - 1))} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Minus size={14} /></button>
+                    <span style={{ color: '#FFF', fontWeight: 900, fontSize: '0.95rem' }}>+{extraImagesCount} Extra Image(s)</span>
+                    <button onClick={() => setExtraImagesCount(extraImagesCount + 1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Plus size={14} /></button>
+                  </div>
+                  <div style={{ color: '#10B981', fontWeight: 900, fontSize: '1.1rem' }}>
+                    Total: ₹{699 + (extraImagesCount * 149)}
+                  </div>
+                </div>
+              </div>
+
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
-                  <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> 2 Images / Ads / Poster / Banners Included
+                  <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> {2 + extraImagesCount} Images / Ads / Poster / Banners Included
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
                   <CheckCircle size={16} style={{ color: '#10B981', flexShrink: 0 }} /> Tailored with Your Brand Kit
@@ -395,11 +464,11 @@ export default function Services({ setActiveTab }) {
               </div>
 
               <button
-                onClick={() => setActiveTab('contact')}
-                className="btn-primary"
+                onClick={handleAddImageAdsToCart}
+                className="btn-accent"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
-                Inquire Image Ads <ArrowRight size={16} />
+                <ShoppingCart size={16} /> Add Image Ads to Cart
               </button>
             </div>
           </div>
@@ -454,7 +523,7 @@ export default function Services({ setActiveTab }) {
             <div>
               <button
                 onClick={() => setActiveTab('contact')}
-                className="btn-accent"
+                className="btn-secondary"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
                 Request Custom Store Quote <ArrowRight size={16} />
