@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Bot, Menu, X, Flame, PhoneCall, Code2, Sun, Moon, ShoppingCart, Lock } from 'lucide-react';
+import { Sparkles, Bot, Menu, X, Flame, PhoneCall, Code2, Sun, Moon, ShoppingCart } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, cartCount = 0, setIsCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -20,7 +20,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-nav">
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         
         {/* Brand Logo */}
         <div 
@@ -31,7 +31,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             src="/logo.png" 
             alt="saiyam.io Logo" 
             style={{ 
-              height: '42px',
+              height: '38px',
               width: 'auto',
               objectFit: 'contain',
               filter: theme === 'dark' ? 'invert(1)' : 'none',
@@ -41,7 +41,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '8px' }} className="desktop-nav">
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '6px' }} className="desktop-nav">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -50,7 +50,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 onClick={() => handleNavClick(item.id)}
                 style={{
                   position: 'relative',
-                  padding: '10px 18px',
+                  padding: '8px 16px',
                   borderRadius: '12px',
                   border: 'none',
                   background: isActive 
@@ -60,7 +60,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                     : 'transparent',
                   color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
                   fontWeight: isActive ? 700 : 500,
-                  fontSize: '0.92rem',
+                  fontSize: '0.9rem',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   display: 'flex',
@@ -72,7 +72,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 {item.label}
                 {item.badge && (
                   <span style={{
-                    fontSize: '0.65rem',
+                    fontSize: '0.62rem',
                     background: 'linear-gradient(135deg, #EF4444, #F97316)',
                     color: '#FFF',
                     padding: '2px 6px',
@@ -90,8 +90,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           })}
         </nav>
 
-        {/* Action Buttons: Cart, Theme Toggle, Admin & Hire Me */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Action Buttons: Cart, Theme Toggle & Hire Me */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           
           {/* Cart Icon Button */}
           <button
@@ -102,8 +102,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               border: '1px solid rgba(16, 185, 129, 0.3)',
               color: '#10B981',
               borderRadius: '12px',
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -111,7 +111,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             }}
             title="View Shopping Cart"
           >
-            <ShoppingCart size={20} />
+            <ShoppingCart size={19} />
             {cartCount > 0 && (
               <span style={{
                 position: 'absolute',
@@ -119,7 +119,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 right: '-4px',
                 background: '#EF4444',
                 color: '#FFF',
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 fontWeight: 900,
                 width: '18px',
                 height: '18px',
@@ -142,8 +142,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               border: '1px solid var(--glass-border)',
               color: theme === 'dark' ? '#F59E0B' : '#8B5CF6',
               borderRadius: '12px',
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -151,35 +151,15 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             }}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-
-          {/* Admin Lock Button */}
-          <button
-            onClick={() => handleNavClick('admin')}
-            style={{
-              background: activeTab === 'admin' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--glass-border)',
-              color: activeTab === 'admin' ? '#FFF' : 'var(--text-muted)',
-              borderRadius: '12px',
-              width: '42px',
-              height: '42px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer'
-            }}
-            title="Saiyam Admin Panel"
-          >
-            <Lock size={18} />
+            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
 
           <button 
             onClick={() => handleNavClick('contact')}
             className="btn-primary"
-            style={{ padding: '10px 18px', fontSize: '0.88rem' }}
+            style={{ padding: '9px 16px', fontSize: '0.86rem' }}
           >
-            <PhoneCall size={16} /> Hire Saiyam
+            <PhoneCall size={15} /> Hire Saiyam
           </button>
 
           <button
@@ -189,13 +169,13 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               background: 'rgba(139, 92, 246, 0.12)',
               border: '1px solid var(--glass-border)',
               color: 'var(--text-main)',
-              padding: '10px',
+              padding: '8px',
               borderRadius: '10px',
               cursor: 'pointer'
             }}
             className="mobile-toggle"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
@@ -207,17 +187,17 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           background: 'rgba(11, 15, 26, 0.98)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--glass-border)',
-          padding: '20px 24px',
+          padding: '16px 20px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px'
+          gap: '10px'
         }}>
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
               style={{
-                padding: '12px 16px',
+                padding: '10px 14px',
                 borderRadius: '10px',
                 border: 'none',
                 background: activeTab === item.id ? 'var(--glass-bg)' : 'transparent',
@@ -240,23 +220,6 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               )}
             </button>
           ))}
-          <button
-            onClick={() => handleNavClick('admin')}
-            style={{
-              padding: '12px 16px',
-              borderRadius: '10px',
-              border: '1px solid var(--glass-border)',
-              background: 'rgba(168, 85, 247, 0.15)',
-              color: '#C084FC',
-              fontWeight: 700,
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <Lock size={18} /> Admin Dashboard (/admin)
-          </button>
         </div>
       )}
     </header>

@@ -62,7 +62,7 @@ export default function App() {
       case 'sam':
         return <SAMHub setActiveTab={setActiveTab} />;
       case 'contact':
-        return <Contact />;
+        return <Contact setActiveTab={setActiveTab} />;
       case 'admin':
         return <Admin />;
       default:
