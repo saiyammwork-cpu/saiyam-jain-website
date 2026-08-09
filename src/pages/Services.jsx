@@ -49,24 +49,6 @@ export default function Services({ setActiveTab, addToCart, setIsCartOpen }) {
       name: 'STANDARD Website Package',
       price: pricing.standardPrice,
       displayPrice: `₹${pricing.standardPrice.toLocaleString()}`,
-      tag: 'Starter Web Solution',
-      popular: false,
-      features: [
-        '3 word domain/subdomain (Lifetime Free, e.g. trilok-tours.site.je)',
-        'WordPress / AI generated structure',
-        'Can avail/add AI chatbot @ ₹999 extra',
-        'Delivery Timeline: 3 Days',
-        'SEO Optimization Included',
-        '₹0 Maintenance Cost',
-        '5 Pages (Limit) Website'
-      ],
-      changes: '3 changes allowed only'
-    },
-    {
-      id: 'web-standard',
-      name: 'STANDARD Website Package',
-      price: pricing.standardPrice,
-      displayPrice: `₹${pricing.standardPrice.toLocaleString()}`,
       tag: 'Most Popular Growth Plan',
       popular: true,
       features: [
