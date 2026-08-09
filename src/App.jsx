@@ -6,6 +6,7 @@ import CartDrawer from './components/CartDrawer';
 
 import Home from './pages/Home';
 import Services from './pages/Services';
+import Courses from './pages/Courses';
 import Prompts from './pages/Prompts';
 import SAMHub from './pages/SAMHub';
 import Contact from './pages/Contact';
@@ -57,6 +58,8 @@ export default function App() {
         return <Home setActiveTab={setActiveTab} />;
       case 'services':
         return <Services setActiveTab={setActiveTab} addToCart={addToCart} setIsCartOpen={setIsCartOpen} />;
+      case 'courses':
+        return <Courses setActiveTab={setActiveTab} />;
       case 'prompts':
         return <Prompts />;
       case 'sam':

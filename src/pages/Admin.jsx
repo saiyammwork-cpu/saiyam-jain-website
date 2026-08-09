@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Lock, ShieldCheck, Package, ListFilter, DollarSign, Settings, MessageSquare, ExternalLink,
-  CheckCircle, Clock, Trash2, Edit3, Save, RefreshCw, Key, LogOut, FileText, Globe, Image, Video, AlertTriangle, ArrowRight, UserCheck, Tag, Plus
+  CheckCircle, Clock, Trash2, Edit3, Save, RefreshCw, Key, LogOut, FileText, Globe, Image, Video, AlertTriangle, ArrowRight, UserCheck, Tag, Plus, GraduationCap
 } from 'lucide-react';
 
 export default function Admin() {
@@ -14,7 +14,7 @@ export default function Admin() {
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState(false);
 
-  // Active Admin Sub-Tab: 'orders' | 'inquiries' | 'coupons' | 'pricing' | 'media'
+  // Active Admin Sub-Tab: 'orders' | 'courses' | 'coupons' | 'inquiries' | 'pricing' | 'media'
   const [adminTab, setAdminTab] = useState('orders');
 
   // Persistent States
@@ -23,8 +23,10 @@ export default function Admin() {
   const [coupons, setCoupons] = useState([
     { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
   ]);
+  const [courses, setCourses] = useState([]);
 
   const [newCoupon, setNewCoupon] = useState({ code: '', discount: 10, type: 'percentage', status: 'Active' });
+  const [newCourse, setNewCourse] = useState({ title: '', price: '', link: '', badge: 'Featured', description: '', status: 'Published' });
 
   const [pricing, setPricing] = useState({
     basicPrice: 4999,
@@ -54,12 +56,14 @@ export default function Admin() {
     const savedCoupons = JSON.parse(localStorage.getItem('saiyam_coupons') || 'null') || [
       { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
     ];
+    const savedCourses = JSON.parse(localStorage.getItem('saiyam_courses') || '[]');
     const savedPricing = JSON.parse(localStorage.getItem('saiyam_pricing') || 'null');
     const savedMedia = JSON.parse(localStorage.getItem('saiyam_media') || 'null');
 
     setOrders(savedOrders);
     setInquiries(savedInquiries);
     setCoupons(savedCoupons);
+    setCourses(savedCourses);
     if (savedPricing) setPricing(savedPricing);
     if (savedMedia) setMediaLinks(savedMedia);
   }, []);
@@ -139,6 +143,38 @@ export default function Admin() {
     localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
   };
 
+  const handleAddCourse = (e) => {
+    e.preventDefault();
+    if (!newCourse.title.trim() || !newCourse.link.trim()) return;
+
+    const courseObj = {
+      id: 'CRS-' + Math.floor(100000 + Math.random() * 900000),
+      ...newCourse
+    };
+
+    const updated = [courseObj, ...courses];
+    setCourses(updated);
+    localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+    setNewCourse({ title: '', price: '', link: '', badge: 'Featured', description: '', status: 'Published' });
+
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
+  };
+
+  const toggleCourseStatus = (id) => {
+    const updated = courses.map(c => c.id === id ? { ...c, status: c.status === 'Published' ? 'Draft' : 'Published' } : c);
+    setCourses(updated);
+    localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+  };
+
+  const deleteCourse = (id) => {
+    if (window.confirm("Delete this course link?")) {
+      const updated = courses.filter(c => c.id !== id);
+      setCourses(updated);
+      localStorage.setItem('saiyam_courses', JSON.stringify(updated));
+    }
+  };
+
   const savePricingSettings = () => {
     localStorage.setItem('saiyam_pricing', JSON.stringify(pricing));
     setSavedSuccess(true);
@@ -193,7 +229,7 @@ export default function Admin() {
             Saiyam Admin Gateway
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '20px' }}>
-            Enter the master administrator password to access orders, coupon codes, and pricing controls.
+            Enter the master administrator password to access orders, courses, coupons, and pricing.
           </p>
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -284,6 +320,25 @@ export default function Admin() {
             }}
           >
             <Package size={16} /> Live Orders ({orders.length})
+          </button>
+
+          <button
+            onClick={() => setAdminTab('courses')}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              border: adminTab === 'courses' ? '1px solid rgba(56, 189, 248, 0.5)' : '1px solid var(--glass-border)',
+              background: adminTab === 'courses' ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
+              color: adminTab === 'courses' ? 'var(--text-main)' : 'var(--text-muted)',
+              fontWeight: 700,
+              fontSize: '0.86rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <GraduationCap size={16} style={{ color: '#38BDF8' }} /> Courses Manager ({courses.length})
           </button>
 
           <button
@@ -464,7 +519,126 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 2: COUPON MANAGER */}
+        {/* TAB 2: COURSES MANAGER */}
+        {adminTab === 'courses' && (
+          <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <GraduationCap size={20} style={{ color: '#38BDF8' }} /> Add & Manage Courses via Link
+            </h2>
+
+            {/* Form to Add New Course */}
+            <form onSubmit={handleAddCourse} style={{ display: 'flex', flexDirection: 'column', gap: '14px', background: 'rgba(255,255,255,0.04)', padding: '20px', borderRadius: '16px', border: '1px solid var(--glass-border)', marginBottom: '24px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Course Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. AI Prompt Engineering Masterclass"
+                    value={newCourse.title}
+                    onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700 }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Course Link / URL *</label>
+                  <input
+                    type="url"
+                    required
+                    placeholder="https://..."
+                    value={newCourse.link}
+                    onChange={(e) => setNewCourse({ ...newCourse, link: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700 }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Price (₹, Leave empty for FREE)</label>
+                  <input
+                    type="number"
+                    placeholder="0 or empty for Free"
+                    value={newCourse.price}
+                    onChange={(e) => setNewCourse({ ...newCourse, price: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700 }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Badge Tag</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Featured, Hot, Free"
+                    value={newCourse.badge}
+                    onChange={(e) => setNewCourse({ ...newCourse, badge: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Course Description / Details</label>
+                <textarea
+                  rows={2}
+                  placeholder="Explain what students will learn in this course..."
+                  value={newCourse.description}
+                  onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+                  style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', resize: 'vertical' }}
+                />
+              </div>
+
+              <button type="submit" className="btn-primary" style={{ padding: '10px 20px', alignSelf: 'flex-start', borderRadius: '10px' }}>
+                <Plus size={16} /> Publish Course Link
+              </button>
+            </form>
+
+            {/* Courses List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {courses.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                  No courses added yet. Add your first course link using the form above!
+                </div>
+              ) : (
+                courses.map((c) => (
+                  <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '14px', border: '1px solid var(--glass-border)' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#FFF', fontWeight: 800, fontSize: '1rem' }}>{c.title}</span>
+                        <span style={{ color: '#10B981', fontWeight: 900, fontSize: '0.88rem' }}>{c.price ? `₹${c.price}` : 'FREE'}</span>
+                        <span style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#C084FC', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700 }}>{c.badge}</span>
+                      </div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '2px' }}>Link: {c.link}</div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <button
+                        onClick={() => toggleCourseStatus(c.id)}
+                        style={{
+                          background: c.status === 'Published' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                          border: c.status === 'Published' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.4)',
+                          color: c.status === 'Published' ? '#10B981' : '#EF4444',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          fontWeight: 800,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {c.status}
+                      </button>
+
+                      <button onClick={() => deleteCourse(c.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: COUPON MANAGER */}
         {adminTab === 'coupons' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -532,7 +706,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 3: FORM INQUIRIES */}
+        {/* TAB 4: FORM INQUIRIES */}
         {adminTab === 'inquiries' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {inquiries.length === 0 ? (
@@ -573,7 +747,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 4: PRICING MANAGER */}
+        {/* TAB 5: PRICING MANAGER */}
         {adminTab === 'pricing' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -648,7 +822,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 5: LINKS & MEDIA MANAGER */}
+        {/* TAB 6: LINKS & MEDIA MANAGER */}
         {adminTab === 'media' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
