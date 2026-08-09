@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Lock, ShieldCheck, Package, ListFilter, DollarSign, Settings, MessageSquare, ExternalLink,
-  CheckCircle, Clock, Trash2, Edit3, Save, RefreshCw, Key, LogOut, FileText, Globe, Image, Video, AlertTriangle, ArrowRight, UserCheck
+  CheckCircle, Clock, Trash2, Edit3, Save, RefreshCw, Key, LogOut, FileText, Globe, Image, Video, AlertTriangle, ArrowRight, UserCheck, Tag, Plus
 } from 'lucide-react';
 
 export default function Admin() {
@@ -14,12 +14,18 @@ export default function Admin() {
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState(false);
 
-  // Active Admin Sub-Tab: 'orders' | 'inquiries' | 'pricing' | 'media'
+  // Active Admin Sub-Tab: 'orders' | 'inquiries' | 'coupons' | 'pricing' | 'media'
   const [adminTab, setAdminTab] = useState('orders');
 
   // Persistent States
   const [orders, setOrders] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [coupons, setCoupons] = useState([
+    { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
+  ]);
+
+  const [newCoupon, setNewCoupon] = useState({ code: '', discount: 10, type: 'percentage', status: 'Active' });
+
   const [pricing, setPricing] = useState({
     basicPrice: 4999,
     standardPrice: 8999,
@@ -45,11 +51,15 @@ export default function Admin() {
   const fetchLiveData = useCallback(() => {
     const savedOrders = JSON.parse(localStorage.getItem('saiyam_orders') || '[]');
     const savedInquiries = JSON.parse(localStorage.getItem('saiyam_inquiries') || '[]');
+    const savedCoupons = JSON.parse(localStorage.getItem('saiyam_coupons') || 'null') || [
+      { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }
+    ];
     const savedPricing = JSON.parse(localStorage.getItem('saiyam_pricing') || 'null');
     const savedMedia = JSON.parse(localStorage.getItem('saiyam_media') || 'null');
 
     setOrders(savedOrders);
     setInquiries(savedInquiries);
+    setCoupons(savedCoupons);
     if (savedPricing) setPricing(savedPricing);
     if (savedMedia) setMediaLinks(savedMedia);
   }, []);
@@ -57,11 +67,7 @@ export default function Admin() {
   // Setup Real-time Live Sync Interval & Storage Listener
   useEffect(() => {
     fetchLiveData();
-
-    // Listen for storage events across tabs/devices
     window.addEventListener('storage', fetchLiveData);
-
-    // Poll every 1.5 seconds for instant local/session updates
     const interval = setInterval(fetchLiveData, 1500);
 
     return () => {
@@ -106,6 +112,33 @@ export default function Admin() {
     localStorage.setItem('saiyam_inquiries', JSON.stringify(updated));
   };
 
+  const handleAddCoupon = (e) => {
+    e.preventDefault();
+    if (!newCoupon.code.trim()) return;
+
+    const formattedCode = newCoupon.code.trim().toUpperCase();
+    const updated = [...coupons.filter(c => c.code !== formattedCode), { ...newCoupon, code: formattedCode }];
+    
+    setCoupons(updated);
+    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+    setNewCoupon({ code: '', discount: 10, type: 'percentage', status: 'Active' });
+
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
+  };
+
+  const toggleCouponStatus = (code) => {
+    const updated = coupons.map(c => c.code === code ? { ...c, status: c.status === 'Active' ? 'Disabled' : 'Active' } : c);
+    setCoupons(updated);
+    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+  };
+
+  const deleteCoupon = (code) => {
+    const updated = coupons.filter(c => c.code !== code);
+    setCoupons(updated);
+    localStorage.setItem('saiyam_coupons', JSON.stringify(updated));
+  };
+
   const savePricingSettings = () => {
     localStorage.setItem('saiyam_pricing', JSON.stringify(pricing));
     setSavedSuccess(true);
@@ -129,7 +162,6 @@ export default function Admin() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
 
-  // Render Password Modal if Not Authenticated
   if (!isAuthenticated) {
     return (
       <div style={{ paddingTop: '130px', paddingBottom: '90px', minHeight: '75vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}>
@@ -161,7 +193,7 @@ export default function Admin() {
             Saiyam Admin Gateway
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '20px' }}>
-            Enter the master administrator password to access orders, form submissions, and pricing controls.
+            Enter the master administrator password to access orders, coupon codes, and pricing controls.
           </p>
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -255,6 +287,25 @@ export default function Admin() {
           </button>
 
           <button
+            onClick={() => setAdminTab('coupons')}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              border: adminTab === 'coupons' ? '1px solid rgba(192, 132, 252, 0.5)' : '1px solid var(--glass-border)',
+              background: adminTab === 'coupons' ? 'linear-gradient(135deg, rgba(192, 132, 252, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
+              color: adminTab === 'coupons' ? 'var(--text-main)' : 'var(--text-muted)',
+              fontWeight: 700,
+              fontSize: '0.86rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Tag size={16} style={{ color: '#C084FC' }} /> Coupon Manager ({coupons.length})
+          </button>
+
+          <button
             onClick={() => setAdminTab('inquiries')}
             style={{
               padding: '10px 16px',
@@ -335,6 +386,11 @@ export default function Admin() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <span style={{ color: '#38BDF8', fontWeight: 900, fontSize: '1.1rem' }}>{ord.id}</span>
                         <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>• {ord.date}</span>
+                        {ord.couponUsed && (
+                          <span style={{ background: 'rgba(192, 132, 252, 0.15)', border: '1px solid rgba(192, 132, 252, 0.4)', color: '#C084FC', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800 }}>
+                            🏷️ {ord.couponUsed} (-₹{ord.discount})
+                          </span>
+                        )}
                       </div>
                       <div style={{ color: 'var(--heading-color)', fontWeight: 800, fontSize: '1rem', marginTop: '4px' }}>
                         👤 {ord.client.name} <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({ord.client.phone})</span>
@@ -398,7 +454,7 @@ export default function Admin() {
                       ))}
                     </ul>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px', marginTop: '8px', fontWeight: 900, fontSize: '1rem', color: '#FFF' }}>
-                      <span>Total Amount:</span>
+                      <span>Final Payable Amount:</span>
                       <span style={{ color: '#10B981' }}>₹{ord.total}</span>
                     </div>
                   </div>
@@ -408,14 +464,81 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 2: FORM INQUIRIES */}
+        {/* TAB 2: COUPON MANAGER */}
+        {adminTab === 'coupons' && (
+          <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Tag size={20} style={{ color: '#C084FC' }} /> Manage Active Coupon Codes
+            </h2>
+
+            {/* Create New Coupon Form */}
+            <form onSubmit={handleAddCoupon} style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', background: 'rgba(255,255,255,0.04)', padding: '16px', borderRadius: '14px', border: '1px solid var(--glass-border)', marginBottom: '24px' }}>
+              <input
+                type="text"
+                required
+                placeholder="Coupon Code (e.g. SAIYAM10)"
+                value={newCoupon.code}
+                onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value })}
+                style={{ flex: 1, minWidth: '180px', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700, textTransform: 'uppercase' }}
+              />
+
+              <input
+                type="number"
+                required
+                placeholder="Discount % (e.g. 10)"
+                value={newCoupon.discount}
+                onChange={(e) => setNewCoupon({ ...newCoupon, discount: Number(e.target.value) })}
+                style={{ width: '140px', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontWeight: 700 }}
+              />
+
+              <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.88rem' }}>
+                <Plus size={16} /> Add Coupon Code
+              </button>
+            </form>
+
+            {/* Active Coupons List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {coupons.map((c, cidx) => (
+                <div key={cidx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.05)', padding: '14px 18px', borderRadius: '14px', border: '1px solid var(--glass-border)' }}>
+                  <div>
+                    <span style={{ color: '#C084FC', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.05em' }}>{c.code}</span>
+                    <span style={{ color: '#10B981', fontWeight: 800, fontSize: '0.9rem', marginLeft: '12px' }}>{c.discount}% Instant Discount</span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button
+                      onClick={() => toggleCouponStatus(c.code)}
+                      style={{
+                        background: c.status === 'Active' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                        border: c.status === 'Active' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.4)',
+                        color: c.status === 'Active' ? '#10B981' : '#EF4444',
+                        padding: '6px 12px',
+                        borderRadius: '10px',
+                        fontWeight: 800,
+                        fontSize: '0.8rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {c.status}
+                    </button>
+
+                    <button onClick={() => deleteCoupon(c.code)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: FORM INQUIRIES */}
         {adminTab === 'inquiries' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {inquiries.length === 0 ? (
               <div className="glass-panel" style={{ padding: '50px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
                 <MessageSquare size={40} style={{ opacity: 0.3, margin: '0 auto 12px auto' }} />
                 <h3 style={{ color: 'var(--heading-color)', fontSize: '1.1rem', fontWeight: 800 }}>No Contact Form Submissions Yet</h3>
-                <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Form submissions filled by visitors on mobile/desktop will automatically sync here in real-time.</p>
               </div>
             ) : (
               inquiries.map((inq, idx) => (
@@ -450,7 +573,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 3: SERVICES & PRICING MANAGER */}
+        {/* TAB 4: PRICING MANAGER */}
         {adminTab === 'pricing' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -525,7 +648,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 4: LINKS & MEDIA MANAGER */}
+        {/* TAB 5: LINKS & MEDIA MANAGER */}
         {adminTab === 'media' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
