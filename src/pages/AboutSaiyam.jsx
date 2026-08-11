@@ -5,6 +5,7 @@ import {
   ArrowUpRight, ChevronDown, CheckCircle, Cpu, BookOpen
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import saiyamRealPhoto from '../assets/saiyam-real.jpg';
 
 export default function AboutSaiyam({ setActiveTab }) {
   useEffect(() => {
@@ -115,7 +116,7 @@ export default function AboutSaiyam({ setActiveTab }) {
                 background: '#111422'
               }}>
                 <img 
-                  src="/saiyam-real.jpg" 
+                  src={saiyamRealPhoto} 
                   alt="Saiyam Jain - Content Creator & Website Builder" 
                   style={{
                     width: '100%',
