@@ -37,16 +37,16 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
           onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           style={{
             position: 'relative',
-            width: '48px',
-            height: '48px',
+            width: '58px',
+            height: '58px',
             borderRadius: '50%',
             overflow: 'hidden',
-            border: '2px solid rgba(255, 255, 255, 0.85)',
+            border: '2.5px solid #FFFFFF',
             background: '#070913',
             cursor: 'pointer',
             padding: 0,
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.3)',
-            transition: 'transform 0.25s ease'
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.4)',
+            transition: 'all 0.25s ease'
           }}
           title="About Saiyam Jain"
         >
@@ -58,7 +58,8 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center top',
+              objectPosition: 'center 42%',
+              transform: 'scale(1.25)',
               display: 'block'
             }}
           />

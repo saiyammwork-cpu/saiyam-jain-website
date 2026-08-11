@@ -124,7 +124,8 @@ export default function AboutSaiyam({ setActiveTab }) {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center top',
+                    objectPosition: 'center 42%',
+                    transform: 'scale(1.15)',
                     display: 'block',
                     position: 'relative',
                     zIndex: 1
