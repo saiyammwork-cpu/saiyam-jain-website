@@ -91,7 +91,7 @@ export default function Home({ setActiveTab }) {
         </div>
 
 
-        {/* FOOTER CONTENT PINNED TO BOTTOM OVER GRADIENT FADE-UP */}
+        {/* FOOTER CONTENT PINNED TO BOTTOM OVER DARK GRADIENT FADE-UP */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -100,8 +100,8 @@ export default function Home({ setActiveTab }) {
             position: 'relative',
             zIndex: 30,
             width: '100%',
-            background: 'linear-gradient(to top, var(--bg-main) 0%, rgba(250,250,251,0.85) 60%, transparent 100%)',
-            padding: '60px 32px 32px 32px'
+            background: 'linear-gradient(to top, #070913 0%, rgba(7, 9, 19, 0.95) 75%, transparent 100%)',
+            padding: '60px 24px 32px 24px'
           }}
         >
           <div style={{

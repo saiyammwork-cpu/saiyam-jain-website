@@ -44,22 +44,8 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
         pointerEvents: 'auto'
       }}>
         
-        {/* DESKTOP NAV LINKS */}
-        <nav 
-          style={{
-            background: 'var(--glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--glass-border)',
-            padding: '4px 8px',
-            borderRadius: '9999px',
-            boxShadow: 'var(--shadow-sm)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '2px'
-          }}
-          className="desktop-nav"
-        >
+        {/* DESKTOP NAV LINKS CONTAINER (Hidden on Mobile via CSS) */}
+        <nav className="desktop-nav-container">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
