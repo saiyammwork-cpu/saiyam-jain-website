@@ -7,6 +7,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
 
   const navItems = [
     { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About Saiyam' },
     { id: 'services', label: 'Services & Pricing' },
     { id: 'courses', label: 'Courses' },
     { id: 'prompts', label: 'Prompts Vault', badge: 'Hot' },

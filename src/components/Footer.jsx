@@ -76,6 +76,7 @@ export default function Footer({ setActiveTab }) {
           <div>
             <h4 style={{ color: '#09090B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Core Services & Pricing</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', color: '#71717A', fontSize: '0.9rem' }}>
+              <li onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ cursor: 'pointer', fontWeight: 700, color: '#09090B' }}>👤 About Saiyam Jain</li>
               <li>💻 Websites (Basic, Standard, Premium)</li>
               <li>🛍️ E-Commerce Online Stores</li>
               <li>🎥 AI Generated Video ADs</li>

@@ -243,8 +243,108 @@ export default function Home({ setActiveTab }) {
 
 
       {/* ====================================================================
-          PRESERVED SECTIONS: BRANDS, SERVICES GRID & PROMPTS VAULT
+          PREMIUM EDITORIAL PROFILE CARD: MEET SAIYAM
           ==================================================================== */}
+      <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '60px 24px 20px 24px' }}>
+        <motion.div
+          whileHover={{ y: -6, scale: 1.01 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          className="glow-card-white"
+          style={{
+            padding: '36px',
+            borderRadius: '32px',
+            cursor: 'pointer',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '32px',
+            alignItems: 'center'
+          }}>
+            {/* Left Info Column */}
+            <div>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#FFFFFF',
+                color: '#070913',
+                fontSize: '0.75rem',
+                fontWeight: 900,
+                padding: '4px 14px',
+                borderRadius: '9999px',
+                marginBottom: '16px',
+                letterSpacing: '0.08em'
+              }}>
+                <Sparkles size={13} /> MEET SAIYAM
+              </div>
+
+              <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, color: '#FFFFFF', marginBottom: '12px' }}>
+                Behind the <span className="text-gradient">Screens</span>
+              </h2>
+
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '24px', maxWidth: '520px' }}>
+                Content creator. Builder. AI enthusiast. Always experimenting with what's next.
+              </p>
+
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                color: '#FFFFFF',
+                fontWeight: 800,
+                fontSize: '0.95rem'
+              }}>
+                <span>Explore Full Story & Journey</span>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: '#FFFFFF',
+                  color: '#070913',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 15px rgba(255,255,255,0.3)'
+                }}>
+                  <ArrowRight size={16} />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Photo Column */}
+            <div style={{
+              position: 'relative',
+              height: '240px',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              background: '#111422'
+            }}>
+              <img 
+                src="/saiyam-real.jpg" 
+                alt="Saiyam Jain - Meet Saiyam" 
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center top',
+                  transition: 'transform 0.5s ease'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(7,9,19,0.7) 0%, transparent 60%)'
+              }} />
+            </div>
+
+          </div>
+        </motion.div>
+      </section>
 
       {/* Social Proof: Client Brands */}
       <section style={{ background: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)', padding: '48px 24px' }}>

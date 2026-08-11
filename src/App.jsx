@@ -5,6 +5,7 @@ import SAMWidget from './components/SAMWidget';
 import CartDrawer from './components/CartDrawer';
 
 import Home from './pages/Home';
+import AboutSaiyam from './pages/AboutSaiyam';
 import Services from './pages/Services';
 import Courses from './pages/Courses';
 import Prompts from './pages/Prompts';
@@ -15,10 +16,15 @@ import Admin from './pages/Admin';
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
 
-  // Permanent Dark Theme Enforcement
+  // URL Path Synchronization & Permanent Dark Theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'dark');
     localStorage.setItem('saiyam_theme', 'dark');
+
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('about')) {
+      setActiveTab('about');
+    }
   }, []);
 
   // Global Cart State
@@ -49,6 +55,8 @@ export default function App() {
     switch (activeTab) {
       case 'home':
         return <Home setActiveTab={setActiveTab} />;
+      case 'about':
+        return <AboutSaiyam setActiveTab={setActiveTab} />;
       case 'services':
         return <Services setActiveTab={setActiveTab} addToCart={addToCart} setIsCartOpen={setIsCartOpen} />;
       case 'courses':
