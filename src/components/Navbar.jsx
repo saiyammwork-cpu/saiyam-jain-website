@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Bot, Flame, X, Menu } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ShoppingCart, Bot, X, Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCartOpen }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -16,202 +16,148 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
 
   const handleNavClick = (id) => {
     setActiveTab(id);
-    setMobileMenuOpen(false);
+    setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <motion.header
-      initial={{ y: -16, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        pointerEvents: 'none',
-        padding: '16px 20px'
-      }}
-    >
+    <>
+      {/* Top Right Floating Action Controls (Header Bar Removed) */}
       <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        pointerEvents: 'auto'
+        gap: '10px'
       }}>
-        
-        {/* DESKTOP NAV LINKS CONTAINER (Hidden on Mobile via CSS) */}
-        <nav className="desktop-nav-container">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
+        {/* Cart Icon Button */}
+        <button
+          onClick={() => setIsCartOpen(true)}
+          style={{
+            position: 'relative',
+            background: '#FFFFFF',
+            color: '#070913',
+            borderRadius: '50%',
+            width: '44px',
+            height: '44px',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.2)'
+          }}
+          title="View Shopping Cart"
+        >
+          <ShoppingCart size={18} />
+          {cartCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-2px',
+              right: '-2px',
+              background: '#EF4444',
+              color: '#FFF',
+              fontSize: '0.65rem',
+              fontWeight: 900,
+              width: '18px',
+              height: '18px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {cartCount}
+            </span>
+          )}
+        </button>
+
+        {/* Menu Pill Button */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            background: '#070913',
+            color: '#FFFFFF',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            borderRadius: '9999px',
+            padding: '10px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            fontSize: '0.88rem',
+            fontWeight: 700,
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)'
+          }}
+        >
+          {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          <span>{menuOpen ? 'Close' : 'Menu'}</span>
+        </button>
+      </div>
+
+      {/* Full Glass Menu Overlay when Menu Pill is Tapped */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              top: '76px',
+              right: '20px',
+              zIndex: 9998,
+              width: '300px',
+              maxWidth: 'calc(100vw - 40px)',
+              background: 'rgba(17, 20, 34, 0.96)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '24px',
+              padding: '14px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px'
+            }}
+          >
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '9999px',
+                  padding: '12px 18px',
+                  borderRadius: '14px',
                   border: 'none',
-                  background: isActive ? '#FFFFFF' : 'transparent',
-                  color: isActive ? '#070913' : 'var(--text-muted)',
-                  fontWeight: isActive ? 700 : 500,
-                  fontSize: '0.85rem',
+                  background: activeTab === item.id ? '#FFFFFF' : 'rgba(255, 255, 255, 0.06)',
+                  color: activeTab === item.id ? '#070913' : '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.92rem',
+                  textAlign: 'left',
                   cursor: 'pointer',
-                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  justifyContent: 'space-between',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                {/* Monochrome SAM AI Bot Icon */}
-                {item.isAi && (
-                  <div style={{
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '50%',
-                    background: isActive ? '#070913' : '#FFFFFF',
-                    color: isActive ? '#FFFFFF' : '#070913',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Bot size={11} />
+                <span>{item.label}</span>
+                {item.isAi ? (
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: activeTab === item.id ? '#070913' : '#FFFFFF', color: activeTab === item.id ? '#FFFFFF' : '#070913', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Bot size={12} />
                   </div>
-                )}
-                {item.label}
-                {item.badge && (
-                  <span style={{
-                    fontSize: '0.62rem',
-                    background: '#FFFFFF',
-                    color: '#070913',
-                    padding: '2px 6px',
-                    borderRadius: '6px',
-                    fontWeight: 800
-                  }}>
+                ) : item.badge ? (
+                  <span style={{ fontSize: '0.62rem', background: '#FFFFFF', color: '#070913', padding: '2px 6px', borderRadius: '6px', fontWeight: 900 }}>
                     {item.badge}
                   </span>
-                )}
+                ) : null}
               </button>
-            );
-          })}
-        </nav>
-
-        {/* RIGHT SECTION: CART & MOBILE TOGGLE */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
-          
-          {/* Cart Icon Button */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            style={{
-              position: 'relative',
-              background: '#FFFFFF',
-              color: '#070913',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-sm)'
-            }}
-            title="View Shopping Cart"
-          >
-            <ShoppingCart size={17} />
-            {cartCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-2px',
-                right: '-2px',
-                background: '#EF4444',
-                color: '#FFF',
-                fontSize: '0.65rem',
-                fontWeight: 900,
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          {/* Mobile Menu Toggle Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              background: 'var(--glass-bg)',
-              border: '1px solid var(--glass-border)',
-              color: '#FFFFFF',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer'
-            }}
-            className="mobile-toggle"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-
-        </div>
-
-      </div>
-
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            pointerEvents: 'auto',
-            background: 'var(--bg-surface)',
-            borderRadius: '20px',
-            border: '1px solid var(--glass-border)',
-            padding: '16px',
-            marginTop: '10px',
-            boxShadow: 'var(--shadow-lg)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}
-        >
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              style={{
-                padding: '12px 18px',
-                borderRadius: '12px',
-                border: 'none',
-                background: activeTab === item.id ? '#FFFFFF' : 'var(--glass-pill)',
-                color: activeTab === item.id ? '#070913' : '#FFFFFF',
-                fontWeight: 600,
-                fontSize: '0.92rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}
-            >
-              <span>{item.label}</span>
-              {item.isAi && <Bot size={16} />}
-            </button>
-          ))}
-        </motion.div>
-      )}
-
-    </motion.header>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
