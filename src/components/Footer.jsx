@@ -4,34 +4,32 @@ import { InstagramIcon, YoutubeIcon } from './Icons';
 export default function Footer({ setActiveTab }) {
   return (
     <footer style={{
-      background: 'rgba(5, 7, 14, 0.95)',
-      borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+      background: '#FFFFFF',
+      borderTop: '1px solid rgba(0, 0, 0, 0.08)',
       paddingTop: '60px',
       paddingBottom: '40px',
       marginTop: '80px'
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px', marginBottom: '50px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '40px', marginBottom: '50px' }}>
           
           {/* Col 1: Bio */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-              <img 
-                src="/logo.png" 
-                alt="saiyam.io Logo" 
-                style={{ 
-                  height: '36px',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  filter: 'invert(1)',
-                  mixBlendMode: 'screen'
-                }} 
-              />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-35deg)' }}>
+                <rect x="3" y="5" width="8" height="14" rx="3" fill="#09090B" />
+                <rect x="13" y="5" width="8" height="14" rx="3" fill="#09090B" opacity="0.6" />
+              </svg>
+              <span style={{ fontWeight: 800, fontSize: '1rem', color: '#09090B', letterSpacing: '-0.02em' }}>
+                NeuralKinetics
+              </span>
             </div>
-            <p style={{ color: '#94A3B8', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '20px' }}>
+
+            <p style={{ color: '#71717A', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '20px' }}>
               Content Creator, Web Developer & AI Automations Specialist crafting high-converting websites, AI chatbots, mobile apps, and viral AI Ads.
             </p>
+
             <div style={{ display: 'flex', gap: '12px' }}>
               <a 
                 href="https://instagram.com/saiyam.io" 
@@ -41,8 +39,8 @@ export default function Footer({ setActiveTab }) {
                   width: '40px',
                   height: '40px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  background: '#F4F4F6',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -60,8 +58,8 @@ export default function Footer({ setActiveTab }) {
                   width: '40px',
                   height: '40px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  background: '#F4F4F6',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -76,18 +74,19 @@ export default function Footer({ setActiveTab }) {
 
           {/* Col 2: Services */}
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Our Core Services & Pricing</h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', color: '#94A3B8', fontSize: '0.9rem' }}>
+            <h4 style={{ color: '#09090B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Core Services & Pricing</h4>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', color: '#71717A', fontSize: '0.9rem' }}>
               <li>💻 Websites (Basic, Standard, Premium)</li>
               <li>🛍️ E-Commerce Online Stores</li>
               <li>🎥 AI Generated Video ADs</li>
               <li>🖼️ AI Generated Image ADs</li>
+              <li>🤖 AI Chatbot Integration</li>
             </ul>
           </div>
 
           {/* Col 3: Prompts & AI Agent */}
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Exclusive Resources</h4>
+            <h4 style={{ color: '#09090B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Exclusive Resources</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <a 
                 href="https://saiyam-prompts.base44.app" 
@@ -95,10 +94,10 @@ export default function Footer({ setActiveTab }) {
                 rel="noreferrer"
                 style={{
                   padding: '12px 16px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(56, 189, 248, 0.15))',
-                  border: '1px solid rgba(168, 85, 247, 0.3)',
-                  color: '#FFF',
+                  borderRadius: '14px',
+                  background: '#F4F4F6',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  color: '#09090B',
                   textDecoration: 'none',
                   fontSize: '0.88rem',
                   fontWeight: 600,
@@ -115,10 +114,10 @@ export default function Footer({ setActiveTab }) {
                 onClick={() => { setActiveTab('sam'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 style={{
                   padding: '12px 16px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#38BDF8',
+                  borderRadius: '14px',
+                  background: '#09090B',
+                  border: 'none',
+                  color: '#FFFFFF',
                   fontSize: '0.88rem',
                   fontWeight: 600,
                   display: 'flex',
@@ -128,7 +127,7 @@ export default function Footer({ setActiveTab }) {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Bot size={16} /> Talk to SAM AI Agent
+                  <Bot size={16} style={{ color: '#38BDF8' }} /> Talk to SAM AI Agent
                 </div>
                 <ArrowUpRight size={16} />
               </button>
@@ -137,16 +136,17 @@ export default function Footer({ setActiveTab }) {
 
           {/* Col 4: Trusted Brands */}
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Trusted By Brands</h4>
+            <h4 style={{ color: '#09090B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '20px' }}>Trusted By Brands</h4>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {['Cleanza', 'Jain Bhandar', 'Trilokesh Tours', 'White Hills', 'Balajee Sarees', 'Noarch'].map((brand, i) => (
                 <span key={i} style={{
                   padding: '6px 12px',
                   borderRadius: '20px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: '#F4F4F6',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
                   fontSize: '0.8rem',
-                  color: '#CBD5E1'
+                  color: '#09090B',
+                  fontWeight: 500
                 }}>
                   {brand}
                 </span>
@@ -158,7 +158,7 @@ export default function Footer({ setActiveTab }) {
 
         {/* Bottom Bar */}
         <div style={{
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+          borderTop: '1px solid rgba(0, 0, 0, 0.08)',
           paddingTop: '24px',
           display: 'flex',
           flexWrap: 'wrap',
@@ -166,13 +166,29 @@ export default function Footer({ setActiveTab }) {
           justifyContent: 'space-between',
           gap: '16px',
           fontSize: '0.85rem',
-          color: '#64748B'
+          color: '#71717A'
         }}>
           <div>
-            © {new Date().getFullYear()} Saiyam Jain. All rights reserved. Built with Purple-Blue Gradient Aesthetics.
+            © {new Date().getFullYear()} Saiyam Jain. All rights reserved. Minimal Bionic & AI Theme.
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            Powered by AI & Code <Heart size={14} style={{ color: '#EC4899', fill: '#EC4899' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span>Powered by AI & Code</span>
+            
+            {/* Subtle Admin Login Button */}
+            <button
+              onClick={() => { setActiveTab('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'rgba(113, 113, 122, 0.5)',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+            >
+              admin login
+            </button>
           </div>
         </div>
 
