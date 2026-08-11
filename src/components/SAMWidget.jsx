@@ -55,7 +55,7 @@ export default function SAMWidget({ setActiveTab }) {
 
   return (
     <>
-      {/* Floating Trigger Icon */}
+      {/* Floating Trigger Icon (Monochrome Black & White) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -64,9 +64,9 @@ export default function SAMWidget({ setActiveTab }) {
             bottom: '24px',
             right: '24px',
             zIndex: 999,
-            background: 'linear-gradient(135deg, #8B5CF6, #38BDF8)',
-            color: '#FFF',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'var(--text-main)',
+            color: 'var(--bg-main)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: '50%',
             width: '56px',
             height: '56px',
@@ -74,11 +74,12 @@ export default function SAMWidget({ setActiveTab }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 10px 30px rgba(139, 92, 246, 0.6), 0 0 20px rgba(56, 189, 248, 0.4)'
+            boxShadow: 'var(--shadow-lg)',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
           title="Chat with SAM AI Agent"
         >
-          <Bot size={28} />
+          <Bot size={26} />
         </button>
       )}
 
@@ -92,55 +93,78 @@ export default function SAMWidget({ setActiveTab }) {
           width: '380px',
           maxWidth: 'calc(100vw - 32px)',
           height: '520px',
-          background: 'rgba(11, 15, 26, 0.96)',
+          background: 'var(--bg-surface)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(168, 85, 247, 0.4)',
+          border: '1px solid var(--border-subtle)',
           borderRadius: '24px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
+          boxShadow: 'var(--shadow-lg)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden'
         }}>
           {/* Header */}
           <div style={{
-            padding: '14px 18px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(56, 189, 248, 0.2))',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            padding: '16px 20px',
+            borderBottom: '1px solid var(--border-subtle)',
+            background: 'var(--bg-surface)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Bot size={20} style={{ color: '#38BDF8' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: '50%',
+                background: 'var(--text-main)',
+                color: 'var(--bg-main)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Bot size={18} />
+              </div>
               <div>
-                <div style={{ color: '#FFF', fontWeight: 800, fontSize: '0.92rem' }}>SAM AI Solution Engine</div>
-                <div style={{ color: '#10B981', fontSize: '0.7rem', fontWeight: 700 }}>● Online • Trained on All Updates</div>
+                <div style={{ color: 'var(--text-main)', fontWeight: 800, fontSize: '0.95rem' }}>SAM AI Agent</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} /> Online & Trained
+                </div>
               </div>
             </div>
 
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '4px' }}
-            >
-              <X size={18} />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                onClick={() => { setIsOpen(false); setActiveTab('sam'); }}
+                style={{ background: 'var(--glass-pill)', border: 'none', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Full View <ExternalLink size={12} />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
-          {/* Messages List */}
-          <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {/* Chat Messages */}
+          <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--bg-main)' }}>
             {messages.map((m, idx) => (
               <div
                 key={idx}
                 style={{
                   alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '88%',
-                  background: m.sender === 'user' ? 'linear-gradient(135deg, #8B5CF6, #6D28D9)' : 'rgba(255, 255, 255, 0.06)',
-                  padding: '10px 14px',
-                  borderRadius: m.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
-                  color: '#FFF',
-                  fontSize: '0.84rem',
+                  maxWidth: '85%',
+                  background: m.sender === 'user' ? 'var(--text-main)' : 'var(--bg-surface)',
+                  color: m.sender === 'user' ? 'var(--bg-main)' : 'var(--text-main)',
+                  padding: '12px 16px',
+                  borderRadius: '16px',
+                  border: m.sender === 'user' ? 'none' : '1px solid var(--border-subtle)',
+                  fontSize: '0.86rem',
                   lineHeight: '1.5',
+                  boxShadow: 'var(--shadow-sm)',
                   whiteSpace: 'pre-line'
                 }}
               >
@@ -149,36 +173,49 @@ export default function SAMWidget({ setActiveTab }) {
             ))}
           </div>
 
-          {/* Quick Questions Chips */}
-          <div style={{ padding: '8px 12px', display: 'flex', gap: '6px', overflowX: 'auto', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <button onClick={() => setInput("Coupon code?")} style={{ background: 'rgba(192, 132, 252, 0.15)', color: '#C084FC', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '8px', padding: '4px 8px', fontSize: '0.72rem', fontWeight: 700, whitespace: 'nowrap', cursor: 'pointer' }}>🏷️ Coupon Code?</button>
-            <button onClick={() => setInput("Website prices?")} style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '8px', padding: '4px 8px', fontSize: '0.72rem', fontWeight: 700, whitespace: 'nowrap', cursor: 'pointer' }}>💰 Website Prices?</button>
-            <button onClick={() => setInput("Free domain?")} style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', padding: '4px 8px', fontSize: '0.72rem', fontWeight: 700, whitespace: 'nowrap', cursor: 'pointer' }}>🌐 Free Domain?</button>
+          {/* Quick Chips */}
+          <div style={{ padding: '8px 12px', background: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '6px', overflowX: 'auto' }}>
+            <button onClick={() => setInput('Coupon code')} style={{ padding: '4px 10px', borderRadius: '12px', background: 'var(--glass-pill)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>🏷️ SAIYAM10</button>
+            <button onClick={() => setInput('Website pricing')} style={{ padding: '4px 10px', borderRadius: '12px', background: 'var(--glass-pill)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>💰 Pricing</button>
+            <button onClick={() => setInput('UPI Payment')} style={{ padding: '4px 10px', borderRadius: '12px', background: 'var(--glass-pill)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>💳 UPI QR</button>
           </div>
 
-          {/* Input Box */}
-          <form onSubmit={handleSend} style={{ padding: '12px', background: 'rgba(7, 9, 19, 0.8)', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '8px' }}>
+          {/* Input Form */}
+          <form onSubmit={handleSend} style={{ padding: '12px', background: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '8px' }}>
             <input
               type="text"
-              placeholder="Ask SAM anything..."
+              placeholder="Ask SAM AI anything..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               style={{
                 flex: 1,
-                padding: '8px 12px',
+                padding: '10px 14px',
                 background: 'var(--input-bg)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: '10px',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '12px',
                 color: 'var(--text-main)',
-                outline: 'none',
-                fontSize: '0.84rem'
+                fontSize: '0.85rem',
+                outline: 'none'
               }}
             />
-            <button type="submit" className="btn-primary" style={{ padding: '8px 14px', borderRadius: '10px', fontSize: '0.84rem' }}>
-              <Send size={14} />
+            <button
+              type="submit"
+              style={{
+                background: 'var(--text-main)',
+                color: 'var(--bg-main)',
+                border: 'none',
+                borderRadius: '12px',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <Send size={16} />
             </button>
           </form>
-
         </div>
       )}
     </>

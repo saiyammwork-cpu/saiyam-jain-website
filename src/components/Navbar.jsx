@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, ShoppingCart, Sun, Moon, Sparkles, Bot, Flame, X, Menu, Grid } from 'lucide-react';
+import { ShoppingCart, Sun, Moon, Sparkles, Bot, Flame, X, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, cartCount = 0, setIsCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', label: 'Story' },
+    { id: 'home', label: 'Home' },
     { id: 'services', label: 'Services & Pricing' },
     { id: 'courses', label: 'Courses' },
     { id: 'prompts', label: 'Prompts Vault', badge: 'Hot' },
@@ -44,95 +44,46 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
         pointerEvents: 'auto'
       }}>
         
-        {/* LEFT SECTION */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Logo */}
-          <div 
-            onClick={() => handleNavClick('home')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              background: '#FFFFFF',
-              border: '1px solid rgba(0, 0, 0, 0.08)',
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
-            }}
-          >
-            {/* Custom SVG Icon: Two rotated rounded rectangles at -35deg */}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-35deg)' }}>
-              <rect x="3" y="5" width="8" height="14" rx="3" fill="#09090B" />
-              <rect x="13" y="5" width="8" height="14" rx="3" fill="#09090B" opacity="0.6" />
-            </svg>
-            
-            <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#09090B', letterSpacing: '-0.02em' }}>
-              NeuralKinetics
-            </span>
-          </div>
-
-          {/* Menu Button Pill */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              background: '#09090B',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '9999px',
-              padding: '5px 12px 5px 5px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.15)'
-            }}
-          >
-            <div style={{
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: '#FFFFFF',
-              color: '#09090B',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Plus size={12} strokeWidth={3} />
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Menu
-            </span>
-          </button>
-
-          {/* Tags Pill (Desktop) */}
-          <div 
-            className="desktop-only-tags"
-            style={{
-              background: '#F4F4F6',
-              border: '1px solid rgba(0,0,0,0.06)',
-              borderRadius: '9999px',
-              padding: '6px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}
-          >
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#71717A' }}>Advanced Bionics</span>
-            <span style={{ fontSize: '10px', color: '#D4D4D8' }}>•</span>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#09090B' }}>Cognitive AI</span>
-          </div>
+        {/* BRAND LOGO */}
+        <div 
+          onClick={() => handleNavClick('home')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            padding: '6px 16px',
+            borderRadius: '9999px',
+            boxShadow: 'var(--shadow-sm)'
+          }}
+        >
+          <img 
+            src="/logo.png" 
+            alt="saiyam.io Logo" 
+            style={{ 
+              height: '28px',
+              width: 'auto',
+              objectFit: 'contain',
+              filter: theme === 'dark' ? 'invert(1)' : 'none'
+            }} 
+          />
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+            saiyam.io
+          </span>
         </div>
 
         {/* CENTER / DESKTOP NAV LINKS */}
         <nav 
           style={{
-            background: 'rgba(255, 255, 255, 0.85)',
+            background: 'var(--glass-bg)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(0, 0, 0, 0.08)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid var(--border-subtle)',
             padding: '4px 8px',
             borderRadius: '9999px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+            boxShadow: 'var(--shadow-sm)',
             display: 'flex',
             alignItems: 'center',
             gap: '2px'
@@ -146,13 +97,13 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 style={{
-                  padding: '7px 15px',
+                  padding: '8px 16px',
                   borderRadius: '9999px',
                   border: 'none',
-                  background: isActive ? '#09090B' : 'transparent',
-                  color: isActive ? '#FFFFFF' : '#71717A',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.82rem',
+                  background: isActive ? 'var(--text-main)' : 'transparent',
+                  color: isActive ? 'var(--bg-main)' : 'var(--text-muted)',
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: '0.85rem',
                   cursor: 'pointer',
                   transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                   display: 'flex',
@@ -160,14 +111,28 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                   gap: '6px'
                 }}
               >
-                {item.isAi && <Bot size={13} style={{ color: isActive ? '#38BDF8' : '#0284C7' }} />}
+                {/* Monochrome SAM AI Bot Icon */}
+                {item.isAi && (
+                  <div style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: isActive ? 'var(--bg-main)' : 'var(--text-main)',
+                    color: isActive ? 'var(--text-main)' : 'var(--bg-main)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Bot size={11} />
+                  </div>
+                )}
                 {item.label}
                 {item.badge && (
                   <span style={{
-                    fontSize: '0.6rem',
-                    background: '#EF4444',
-                    color: '#FFF',
-                    padding: '2px 5px',
+                    fontSize: '0.62rem',
+                    background: '#09090B',
+                    color: '#FFFFFF',
+                    padding: '2px 6px',
                     borderRadius: '6px',
                     fontWeight: 800
                   }}>
@@ -179,57 +144,29 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           })}
         </nav>
 
-        {/* RIGHT SECTION */}
+        {/* RIGHT SECTION: CART & THEME TOGGLE */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           
-          {/* Adaptive Systems Label Pill (Desktop) */}
-          <div 
-            className="desktop-only-tags"
-            style={{
-              background: '#F4F4F6',
-              border: '1px solid rgba(0,0,0,0.06)',
-              borderRadius: '9999px',
-              padding: '4px 12px 4px 4px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <div style={{
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: '#09090B',
-              color: '#FFFFFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Grid size={12} />
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#09090B' }}>Adaptive Systems</span>
-          </div>
-
           {/* Cart Icon Button */}
           <button
             onClick={() => setIsCartOpen(true)}
             style={{
               position: 'relative',
-              background: '#09090B',
-              color: '#FFFFFF',
+              background: 'var(--text-main)',
+              color: 'var(--bg-main)',
               borderRadius: '50%',
-              width: '38px',
-              height: '38px',
+              width: '40px',
+              height: '40px',
               border: 'none',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.12)'
+              boxShadow: 'var(--shadow-sm)'
             }}
             title="View Shopping Cart"
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={17} />
             {cartCount > 0 && (
               <span style={{
                 position: 'absolute',
@@ -255,21 +192,41 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           <button
             onClick={toggleTheme}
             style={{
-              background: '#FFFFFF',
-              border: '1px solid rgba(0,0,0,0.1)',
-              color: '#09090B',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-main)',
               borderRadius: '50%',
-              width: '38px',
-              height: '38px',
+              width: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
+              boxShadow: 'var(--shadow-sm)'
             }}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-main)',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+            className="mobile-toggle"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
         </div>
@@ -283,12 +240,12 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           animate={{ opacity: 1, y: 0 }}
           style={{
             pointerEvents: 'auto',
-            background: '#FFFFFF',
+            background: 'var(--bg-surface)',
             borderRadius: '20px',
-            border: '1px solid rgba(0,0,0,0.1)',
+            border: '1px solid var(--border-subtle)',
             padding: '16px',
             marginTop: '10px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+            boxShadow: 'var(--shadow-lg)',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px'
@@ -299,13 +256,13 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               key={item.id}
               onClick={() => handleNavClick(item.id)}
               style={{
-                padding: '10px 16px',
+                padding: '12px 18px',
                 borderRadius: '12px',
                 border: 'none',
-                background: activeTab === item.id ? '#09090B' : '#F4F4F6',
-                color: activeTab === item.id ? '#FFFFFF' : '#09090B',
+                background: activeTab === item.id ? 'var(--text-main)' : 'var(--glass-pill)',
+                color: activeTab === item.id ? 'var(--bg-main)' : 'var(--text-main)',
                 fontWeight: 600,
-                fontSize: '0.9rem',
+                fontSize: '0.92rem',
                 textAlign: 'left',
                 cursor: 'pointer',
                 display: 'flex',
@@ -314,7 +271,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
               }}
             >
               <span>{item.label}</span>
-              {item.isAi && <Bot size={16} style={{ color: '#38BDF8' }} />}
+              {item.isAi && <Bot size={16} />}
             </button>
           ))}
         </motion.div>

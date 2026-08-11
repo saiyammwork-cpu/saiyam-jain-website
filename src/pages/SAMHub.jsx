@@ -355,35 +355,35 @@ Feel free to ask a specific question or select a quick topic below!`;
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            border: '1px solid rgba(168, 85, 247, 0.3)'
+            border: '1px solid var(--border-subtle)'
           }}>
             
             {/* Chat Box Header */}
             <div style={{
               padding: '16px 20px',
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(56, 189, 248, 0.15))',
-              borderBottom: '1px solid var(--glass-border)',
+              background: 'var(--bg-surface)',
+              borderBottom: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #8B5CF6, #38BDF8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-main)' }}>
                   <Bot size={20} />
                 </div>
                 <div>
-                  <div style={{ color: '#FFF', fontWeight: 800, fontSize: '0.95rem' }}>SAM Master Solution Engine</div>
+                  <div style={{ color: 'var(--text-main)', fontWeight: 800, fontSize: '0.95rem' }}>SAM Master Solution Engine</div>
                   <div style={{ color: '#10B981', fontSize: '0.72rem', fontWeight: 700 }}>● Online & Trained on All Features</div>
                 </div>
               </div>
 
-              <div style={{ fontSize: '0.72rem', color: '#C084FC', background: 'rgba(192, 132, 252, 0.15)', padding: '4px 10px', borderRadius: '8px', fontWeight: 800 }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-main)', background: 'var(--glass-pill)', padding: '4px 10px', borderRadius: '9999px', fontWeight: 800, border: '1px solid var(--border-subtle)' }}>
                 Coupon: SAIYAM10
               </div>
             </div>
 
             {/* Messages Thread */}
-            <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', background: 'var(--bg-main)' }}>
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
@@ -391,22 +391,22 @@ Feel free to ask a specific question or select a quick topic below!`;
                     alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                     maxWidth: '85%',
                     background: msg.sender === 'user' 
-                      ? 'linear-gradient(135deg, #8B5CF6, #6D28D9)' 
-                      : 'rgba(255, 255, 255, 0.06)',
+                      ? 'var(--text-main)' 
+                      : 'var(--bg-surface)',
                     border: msg.sender === 'user' 
                       ? 'none' 
-                      : '1px solid var(--glass-border)',
+                      : '1px solid var(--border-subtle)',
                     padding: '14px 18px',
                     borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                    color: '#FFF',
+                    color: msg.sender === 'user' ? 'var(--bg-main)' : 'var(--text-main)',
                     fontSize: '0.9rem',
                     lineHeight: '1.6',
                     whiteSpace: 'pre-line',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                    boxShadow: 'var(--shadow-sm)'
                   }}
                 >
                   {msg.text}
-                  <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.5)', marginTop: '4px', textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.68rem', color: msg.sender === 'user' ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)', marginTop: '4px', textAlign: 'right' }}>
                     {msg.time}
                   </div>
                 </div>
@@ -415,7 +415,7 @@ Feel free to ask a specific question or select a quick topic below!`;
             </div>
 
             {/* Input Form */}
-            <form onSubmit={handleSend} style={{ padding: '14px 18px', background: 'rgba(7, 9, 19, 0.8)', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '10px' }}>
+            <form onSubmit={handleSend} style={{ padding: '14px 18px', background: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '10px' }}>
               <input
                 type="text"
                 placeholder="Ask SAM about prompts, coupons, payments, free domains..."
@@ -425,7 +425,7 @@ Feel free to ask a specific question or select a quick topic below!`;
                   flex: 1,
                   padding: '12px 16px',
                   background: 'var(--input-bg)',
-                  border: '1px solid var(--glass-border)',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '12px',
                   color: 'var(--text-main)',
                   outline: 'none',
