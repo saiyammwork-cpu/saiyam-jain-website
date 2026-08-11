@@ -24,48 +24,6 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
 
   return (
     <>
-      {/* Top Left Floating Profile Avatar (In Circular Frame as Requested) */}
-      <div style={{
-        position: 'fixed',
-        top: '20px',
-        left: '20px',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center'
-      }}>
-        <button
-          onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          style={{
-            position: 'relative',
-            width: '58px',
-            height: '58px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            border: '2.5px solid #FFFFFF',
-            background: '#070913',
-            cursor: 'pointer',
-            padding: 0,
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.4)',
-            transition: 'all 0.25s ease'
-          }}
-          title="About Saiyam Jain"
-        >
-          <img 
-            src={saiyamProfilePhoto} 
-            alt="Saiyam Jain" 
-            onError={(e) => { e.target.src = '/saiyam_profile.jpg'; }}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 42%',
-              transform: 'scale(1.25)',
-              display: 'block'
-            }}
-          />
-        </button>
-      </div>
-
       {/* Top Right Floating Action Controls */}
       <div style={{
         position: 'fixed',
