@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Bot, X, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import saiyamProfilePhoto from '../assets/saiyam_profile.jpg';
 
 export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCartOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +24,48 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
 
   return (
     <>
-      {/* Top Right Floating Action Controls (Header Bar Removed) */}
+      {/* Top Left Floating Profile Avatar (In Circular Frame as Requested) */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        left: '20px',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <button
+          onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          style={{
+            position: 'relative',
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '2px solid rgba(255, 255, 255, 0.85)',
+            background: '#070913',
+            cursor: 'pointer',
+            padding: 0,
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.3)',
+            transition: 'transform 0.25s ease'
+          }}
+          title="About Saiyam Jain"
+        >
+          <img 
+            src={saiyamProfilePhoto} 
+            alt="Saiyam Jain" 
+            onError={(e) => { e.target.src = '/saiyam_profile.jpg'; }}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+              display: 'block'
+            }}
+          />
+        </button>
+      </div>
+
+      {/* Top Right Floating Action Controls */}
       <div style={{
         position: 'fixed',
         top: '20px',
