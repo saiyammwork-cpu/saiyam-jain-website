@@ -6,7 +6,7 @@ import {
 import { motion } from 'framer-motion';
 import { InstagramIcon, YoutubeIcon } from '../components/Icons';
 import VideoModal from '../components/VideoModal';
-import saiyamPhoto from '../assets/saiyam_photo_v2.png';
+import saiyamProfilePhoto from '../assets/saiyam_profile.jpg';
 
 export default function Home({ setActiveTab }) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -326,9 +326,9 @@ export default function Home({ setActiveTab }) {
               background: '#111422'
             }}>
               <img 
-                src={saiyamPhoto} 
+                src={saiyamProfilePhoto} 
                 alt="Saiyam Jain - Meet Saiyam" 
-                onError={(e) => { e.target.src = '/saiyam_photo_v2.png'; }}
+                onError={(e) => { e.target.src = '/saiyam_profile.jpg'; }}
                 style={{
                   width: '100%',
                   height: '100%',
