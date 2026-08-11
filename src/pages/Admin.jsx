@@ -750,6 +750,36 @@ export default function Admin() {
               </div>
 
               <div>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>Basic LMS Website Price (₹)</label>
+                <input
+                  type="number"
+                  value={pricing.lmsBasicPrice || 9999}
+                  onChange={(e) => setPricing({ ...pricing, lmsBasicPrice: Number(e.target.value) })}
+                  style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#FFF', fontWeight: 800 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>Standard LMS Website Price (₹)</label>
+                <input
+                  type="number"
+                  value={pricing.lmsStandardPrice || 10999}
+                  onChange={(e) => setPricing({ ...pricing, lmsStandardPrice: Number(e.target.value) })}
+                  style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#FFF', fontWeight: 800 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>Premium LMS Website Price (₹)</label>
+                <input
+                  type="number"
+                  value={pricing.lmsPremiumPrice || 14999}
+                  onChange={(e) => setPricing({ ...pricing, lmsPremiumPrice: Number(e.target.value) })}
+                  style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#FFF', fontWeight: 800 }}
+                />
+              </div>
+
+              <div>
                 <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>AI Video Ads Base Plan (₹)</label>
                 <input
                   type="number"

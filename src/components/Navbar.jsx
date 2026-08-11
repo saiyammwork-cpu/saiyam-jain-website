@@ -44,39 +44,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
         pointerEvents: 'auto'
       }}>
         
-        {/* BRAND LOGO */}
-        <div 
-          onClick={() => handleNavClick('home')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            cursor: 'pointer',
-            background: 'var(--glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--glass-border)',
-            padding: '6px 16px',
-            borderRadius: '9999px',
-            boxShadow: 'var(--shadow-sm)'
-          }}
-        >
-          <img 
-            src="/logo.png" 
-            alt="saiyam.io Logo" 
-            style={{ 
-              height: '26px',
-              width: 'auto',
-              objectFit: 'contain',
-              filter: 'invert(1)'
-            }} 
-          />
-          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
-            saiyam.io
-          </span>
-        </div>
-
-        {/* CENTER / DESKTOP NAV LINKS */}
+        {/* DESKTOP NAV LINKS */}
         <nav 
           style={{
             background: 'var(--glass-bg)',
@@ -147,7 +115,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
         </nav>
 
         {/* RIGHT SECTION: CART & MOBILE TOGGLE */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
           
           {/* Cart Icon Button */}
           <button

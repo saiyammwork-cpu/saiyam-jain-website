@@ -209,9 +209,13 @@ export default function Courses({ setActiveTab }) {
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '6px' }}>
                     {course.title}
                   </h3>
+
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#A1A1AA', marginBottom: '10px' }}>
+                    By: {course.instructor || 'Saiyam Jain'}
+                  </div>
 
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: '1.6' }}>
                     {course.description}

@@ -18,9 +18,20 @@ const notifyLocal = (type, payload) => {
   }
 };
 
+export const defaultFreeCourse = {
+  id: 'crs-free-webdev-101',
+  title: 'Learn How to make websites for FREE',
+  instructor: 'Saiyam Jain',
+  price: 0,
+  badge: 'Free Masterclass',
+  description: 'Master free domain claiming, WordPress & AI website builders, and step-by-step web publishing by Saiyam Jain.',
+  link: 'https://youtu.be/WHZK2U4MMv8?si=--G3FGX05nuZeuvz',
+  status: 'Published'
+};
+
 // Initial Cloud Database State Template
 const initialMasterState = {
-  courses: [],
+  courses: [defaultFreeCourse],
   orders: [],
   coupons: [{ code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }],
   inquiries: [],
@@ -28,6 +39,9 @@ const initialMasterState = {
     basicPrice: 4999,
     standardPrice: 8999,
     premiumPrice: 11999,
+    lmsBasicPrice: 9999,
+    lmsStandardPrice: 10999,
+    lmsPremiumPrice: 14999,
     videoAdsBase: 1999,
     videoAdsExtra: 799,
     imageAdsBase: 699,
@@ -97,7 +111,14 @@ export const subscribeCourses = (callback) => {
     if (!isSubscribed) return;
     const dbData = await fetchCloudDB();
     if (dbData && dbData.courses) {
-      callback(dbData.courses);
+      if (dbData.courses.length === 0) {
+        callback([defaultFreeCourse]);
+      } else {
+        const hasFreeCourse = dbData.courses.some(c => c.id === defaultFreeCourse.id || c.title.toLowerCase().includes('learn how to make websites for free'));
+        callback(hasFreeCourse ? dbData.courses : [defaultFreeCourse, ...dbData.courses]);
+      }
+    } else {
+      callback([defaultFreeCourse]);
     }
   };
 
@@ -156,7 +177,7 @@ export const deleteCourseFromCloud = async (courseId) => {
 
 
 /* ==========================================================================
-   2. LIVE ORDERS (BUYER WRITE ➔ PRODUCTION DB ➔ ADMIN READ)
+   2. ORDERS & TRANSACTIONS MANAGER
    ========================================================================== */
 
 export const subscribeOrders = (callback) => {
@@ -184,20 +205,13 @@ export const subscribeOrders = (callback) => {
 };
 
 export const createOrderInCloud = async (orderData) => {
-  const orderObj = {
-    ...orderData,
-    createdAt: new Date().toISOString()
-  };
-
   await updateCloudDB((dbState) => {
     const orders = dbState.orders || [];
     return {
       ...dbState,
-      orders: [orderObj, ...orders.filter(o => o.id !== orderObj.id)]
+      orders: [orderData, ...orders]
     };
   });
-
-  return orderObj;
 };
 
 export const updateOrderStageInCloud = async (orderId, newStage) => {
@@ -222,7 +236,7 @@ export const deleteOrderFromCloud = async (orderId) => {
 
 
 /* ==========================================================================
-   3. COUPON MANAGER (ADMIN WRITE ➔ PRODUCTION DB ➔ CHECKOUT READ)
+   3. COUPON MANAGER
    ========================================================================== */
 
 export const subscribeCoupons = (callback) => {
@@ -233,6 +247,8 @@ export const subscribeCoupons = (callback) => {
     const dbData = await fetchCloudDB();
     if (dbData && dbData.coupons) {
       callback(dbData.coupons);
+    } else {
+      callback(initialMasterState.coupons);
     }
   };
 
@@ -252,9 +268,13 @@ export const subscribeCoupons = (callback) => {
 export const saveCouponToCloud = async (couponData) => {
   await updateCloudDB((dbState) => {
     const coupons = dbState.coupons || [];
+    const exists = coupons.some(c => c.code.toUpperCase() === couponData.code.toUpperCase());
+    const nextCoupons = exists
+      ? coupons.map(c => c.code.toUpperCase() === couponData.code.toUpperCase() ? couponData : c)
+      : [...coupons, couponData];
     return {
       ...dbState,
-      coupons: [...coupons.filter(c => c.code !== couponData.code), couponData]
+      coupons: nextCoupons
     };
   });
 };
@@ -282,7 +302,7 @@ export const deleteCouponFromCloud = async (code) => {
 
 
 /* ==========================================================================
-   4. FORM INQUIRIES (CONSUMER WRITE ➔ PRODUCTION DB ➔ ADMIN READ)
+   4. FORM INQUIRIES MANAGER
    ========================================================================== */
 
 export const subscribeInquiries = (callback) => {
@@ -314,7 +334,7 @@ export const createInquiryInCloud = async (inquiryData) => {
     const inquiries = dbState.inquiries || [];
     return {
       ...dbState,
-      inquiries: [inquiryData, ...inquiries.filter(i => i.id !== inquiryData.id)]
+      inquiries: [inquiryData, ...inquiries]
     };
   });
 };
@@ -331,7 +351,7 @@ export const deleteInquiryFromCloud = async (inquiryId) => {
 
 
 /* ==========================================================================
-   5. PRICING MANAGER (ADMIN WRITE ➔ PRODUCTION DB ➔ SERVICES READ)
+   5. PRICING & MEDIA MANAGER
    ========================================================================== */
 
 export const subscribePricing = (callback) => {
@@ -341,7 +361,12 @@ export const subscribePricing = (callback) => {
     if (!isSubscribed) return;
     const dbData = await fetchCloudDB();
     if (dbData && dbData.pricing) {
-      callback(dbData.pricing);
+      callback({
+        ...initialMasterState.pricing,
+        ...dbData.pricing
+      });
+    } else {
+      callback(initialMasterState.pricing);
     }
   };
 
@@ -358,19 +383,12 @@ export const subscribePricing = (callback) => {
   };
 };
 
-export const savePricingToCloud = async (pricingData) => {
-  await updateCloudDB((dbState) => {
-    return {
-      ...dbState,
-      pricing: pricingData
-    };
-  });
+export const savePricingToCloud = async (newPricing) => {
+  await updateCloudDB((dbState) => ({
+    ...dbState,
+    pricing: newPricing
+  }));
 };
-
-
-/* ==========================================================================
-   6. MEDIA & SYSTEM LINKS MANAGER (ADMIN WRITE ➔ PRODUCTION DB ➔ CONSUMER READ)
-   ========================================================================== */
 
 export const subscribeMediaLinks = (callback) => {
   let isSubscribed = true;
@@ -380,6 +398,8 @@ export const subscribeMediaLinks = (callback) => {
     const dbData = await fetchCloudDB();
     if (dbData && dbData.media) {
       callback(dbData.media);
+    } else {
+      callback(initialMasterState.media);
     }
   };
 
@@ -396,11 +416,9 @@ export const subscribeMediaLinks = (callback) => {
   };
 };
 
-export const saveMediaLinksToCloud = async (mediaData) => {
-  await updateCloudDB((dbState) => {
-    return {
-      ...dbState,
-      media: mediaData
-    };
-  });
+export const saveMediaLinksToCloud = async (newMedia) => {
+  await updateCloudDB((dbState) => ({
+    ...dbState,
+    media: newMedia
+  }));
 };
