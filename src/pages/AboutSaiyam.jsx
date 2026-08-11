@@ -5,7 +5,7 @@ import {
   ArrowUpRight, ChevronDown, CheckCircle, Cpu, BookOpen
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import saiyamRealPhoto from '../assets/saiyam-real.jpg';
+import saiyamPhoto from '../assets/saiyam_photo_v2.png';
 
 export default function AboutSaiyam({ setActiveTab }) {
   useEffect(() => {
@@ -110,20 +110,24 @@ export default function AboutSaiyam({ setActiveTab }) {
               <div style={{
                 width: '100%',
                 aspectRatio: '4/5',
+                minHeight: '400px',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 position: 'relative',
                 background: '#111422'
               }}>
                 <img 
-                  src={saiyamRealPhoto} 
+                  src={saiyamPhoto} 
                   alt="Saiyam Jain - Content Creator & Website Builder" 
+                  onError={(e) => { e.target.src = '/saiyam_photo_v2.png'; }}
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
                     objectPosition: 'center top',
-                    filter: 'contrast(1.03) brightness(1.02)'
+                    display: 'block',
+                    position: 'relative',
+                    zIndex: 1
                   }}
                 />
                 
@@ -131,7 +135,9 @@ export default function AboutSaiyam({ setActiveTab }) {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(to top, rgba(7,9,19,0.85) 0%, transparent 60%)'
+                  background: 'linear-gradient(to top, rgba(7,9,19,0.85) 0%, transparent 60%)',
+                  zIndex: 2,
+                  pointerEvents: 'none'
                 }} />
 
                 {/* Bottom Overlay Label */}
@@ -142,7 +148,8 @@ export default function AboutSaiyam({ setActiveTab }) {
                   right: '20px',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  zIndex: 3
                 }}>
                   <div>
                     <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.2rem' }}>Saiyam Jain</div>
@@ -177,7 +184,8 @@ export default function AboutSaiyam({ setActiveTab }) {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              boxShadow: 'var(--shadow-lg)'
+              boxShadow: 'var(--shadow-lg)',
+              zIndex: 4
             }}>
               <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#FFFFFF', color: '#070913', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Bot size={15} />
@@ -198,7 +206,8 @@ export default function AboutSaiyam({ setActiveTab }) {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              boxShadow: 'var(--shadow-lg)'
+              boxShadow: 'var(--shadow-lg)',
+              zIndex: 4
             }}>
               <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#FFFFFF', color: '#070913', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Code size={15} />
