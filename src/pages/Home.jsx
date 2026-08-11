@@ -91,7 +91,7 @@ export default function Home({ setActiveTab }) {
         </div>
 
 
-        {/* FOOTER CONTENT PINNED TO BOTTOM OVER DARK GRADIENT FADE-UP */}
+        {/* FOOTER CONTENT PINNED TO BOTTOM OVER SOFT GRADIENT FADE-UP */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -100,7 +100,7 @@ export default function Home({ setActiveTab }) {
             position: 'relative',
             zIndex: 30,
             width: '100%',
-            background: 'linear-gradient(to top, #070913 0%, rgba(7, 9, 19, 0.95) 75%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(7, 9, 19, 0.65) 0%, rgba(7, 9, 19, 0.3) 50%, transparent 100%)',
             padding: '60px 24px 32px 24px'
           }}
         >
@@ -134,14 +134,15 @@ export default function Home({ setActiveTab }) {
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  backgroundColor: 'var(--text-main)',
+                  backgroundColor: '#FFFFFF',
                   animation: 'pulseDot 2s infinite'
                 }} />
                 <span style={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color: 'var(--text-muted)',
-                  letterSpacing: '-0.01em'
+                  color: '#E2E8F0',
+                  letterSpacing: '-0.01em',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.7)'
                 }}>
                   Seen on Shark Tank in India • Web Developer & AI Solutions Specialist
                 </span>
@@ -157,8 +158,9 @@ export default function Home({ setActiveTab }) {
                   fontWeight: 800,
                   lineHeight: '1.05',
                   letterSpacing: '-0.03em',
-                  color: 'var(--text-main)',
-                  marginBottom: '24px'
+                  color: '#FFFFFF',
+                  marginBottom: '24px',
+                  textShadow: '0 4px 20px rgba(0,0,0,0.8)'
                 }}
               >
                 Crafting High-Converting <br />
