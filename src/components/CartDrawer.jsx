@@ -98,42 +98,41 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
 
   const generateWhatsAppLink = () => {
     if (!placedOrder) return '#';
-    const itemsText = placedOrder.items.map(i => `• ${i.name} (x${i.quantity}) - ₹${i.price * i.quantity}`).join('\n');
-    const couponInfo = placedOrder.couponUsed ? `\n🏷️ *Coupon Applied*: ${placedOrder.couponUsed} (-₹${placedOrder.discount})` : '';
-
-    const text = `Hello Saiyam! 👋\n\nI have placed an order on your website:\n\n📋 *Order ID*: ${placedOrder.id}\n👤 *Name*: ${placedOrder.client.name}\n📞 *Phone*: ${placedOrder.client.phone}${couponInfo}\n💰 *Final Payable Amount*: ₹${placedOrder.total}\n\n*Services Ordered*:\n${itemsText}\n\nI am attaching my payment screenshot below! 📸`;
-    
+    const text = `👋 Hello Saiyam! I just placed an order on *saiyam.io*!\n\n📌 *Order ID*: ${placedOrder.id}\n👤 *Name*: ${placedOrder.client.name}\n📞 *Phone*: ${placedOrder.client.phone}\n💰 *Total Payable*: ₹${placedOrder.total}\n\nHere is my payment screenshot! Please verify and start work.`;
     return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(text)}`;
   };
 
-  const upiPayLink = placedOrder ? `upi://pay?pa=${upiId}&pn=Saiyam%20Jain&am=${placedOrder.total}&cu=INR` : '#';
+  // Dynamic UPI URL for checkout modal
+  const upiPayLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Saiyam Jain')}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent('Website & AI Services')}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiPayLink)}`;
 
   return (
     <>
-      {/* Floating Cart Trigger Button */}
+      {/* Floating Bottom Cart Pill Trigger when Cart Has Items */}
       {cart.length > 0 && !isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           style={{
             position: 'fixed',
-            bottom: '90px',
-            right: '20px',
+            bottom: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
             zIndex: 998,
-            background: 'linear-gradient(135deg, #10B981, #38BDF8)',
-            color: '#FFF',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '30px',
-            padding: '12px 20px',
+            background: '#FFFFFF',
+            color: '#070913',
+            border: 'none',
+            borderRadius: '9999px',
+            padding: '12px 24px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            boxShadow: '0 10px 30px rgba(16, 185, 129, 0.5), 0 0 20px rgba(56, 189, 248, 0.4)'
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.2)'
           }}
         >
           <ShoppingCart size={20} />
           <span style={{ fontWeight: 800, fontSize: '0.92rem' }}>View Cart ({cart.reduce((s, i) => s + i.quantity, 0)})</span>
-          <span style={{ background: 'rgba(0,0,0,0.25)', padding: '4px 10px', borderRadius: '12px', fontWeight: 900, fontSize: '0.85rem' }}>
+          <span style={{ background: '#070913', color: '#FFFFFF', padding: '4px 10px', borderRadius: '12px', fontWeight: 900, fontSize: '0.85rem' }}>
             ₹{totalAmount}
           </span>
         </button>
@@ -148,28 +147,28 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
           bottom: 0,
           width: '420px',
           maxWidth: '100vw',
-          background: 'rgba(11, 15, 26, 0.96)',
+          background: 'var(--bg-surface)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
-          borderLeft: '1px solid rgba(168, 85, 247, 0.35)',
+          borderLeft: '1px solid var(--border-subtle)',
           zIndex: 1000,
-          boxShadow: '-20px 0 50px rgba(0,0,0,0.7)',
+          boxShadow: 'var(--shadow-lg)',
           display: 'flex',
           flexDirection: 'column'
         }}>
           {/* Header */}
           <div style={{
             padding: '20px 24px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(56, 189, 248, 0.2))',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border-subtle)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <ShoppingCart size={22} style={{ color: '#38BDF8' }} />
+              <ShoppingCart size={22} style={{ color: '#FFFFFF' }} />
               <div>
-                <div style={{ color: '#FFF', fontWeight: 800, fontSize: '1.1rem' }}>Your Service Cart</div>
+                <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.1rem' }}>Your Service Cart</div>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>{cart.length} unique services selected</div>
               </div>
             </div>
@@ -183,7 +182,7 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
           </div>
 
           {/* Cart Item List */}
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', background: 'var(--bg-main)' }}>
             {cart.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
                 <ShoppingCart size={48} style={{ opacity: 0.3, margin: '0 auto 16px auto' }} />
@@ -203,8 +202,8 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                   <div
                     key={item.id}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border-subtle)',
                       borderRadius: '16px',
                       padding: '14px',
                       display: 'flex',
@@ -214,8 +213,8 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
-                        <div style={{ color: 'var(--heading-color)', fontWeight: 800, fontSize: '0.92rem' }}>{item.name}</div>
-                        <div style={{ color: '#38BDF8', fontWeight: 700, fontSize: '0.82rem' }}>₹{item.price} per unit</div>
+                        <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.92rem' }}>{item.name}</div>
+                        <div style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.82rem' }}>₹{item.price} per unit</div>
                       </div>
 
                       <button
@@ -226,53 +225,57 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                       </button>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '10px' }}>
-                        <button onClick={() => updateQuantity(item.id, -1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Minus size={14} /></button>
-                        <span style={{ color: '#FFF', fontWeight: 800, fontSize: '0.88rem', minWidth: '20px', textAlign: 'center' }}>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, 1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Plus size={14} /></button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.5)', padding: '4px 10px', borderRadius: '8px' }}>
+                        <button onClick={() => updateQuantity(item.id, -1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Minus size={12} /></button>
+                        <span style={{ color: '#FFF', fontWeight: 800, fontSize: '0.85rem' }}>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, 1)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}><Plus size={12} /></button>
                       </div>
 
-                      <div style={{ color: '#10B981', fontWeight: 900, fontSize: '1rem' }}>
+                      <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1rem' }}>
                         ₹{item.price * item.quantity}
                       </div>
                     </div>
                   </div>
                 ))}
 
-                {/* Coupon Code Section */}
-                <div style={{ background: 'rgba(139, 92, 246, 0.12)', border: '1px dashed rgba(168, 85, 247, 0.4)', borderRadius: '14px', padding: '14px', marginTop: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#C084FC', fontWeight: 700, fontSize: '0.82rem', marginBottom: '8px' }}>
-                    <Tag size={14} /> Have a Coupon Code? (Try "SAIYAM10")
-                  </div>
-
-                  {appliedCoupon ? (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '8px 12px', borderRadius: '10px', color: '#10B981', fontWeight: 800, fontSize: '0.85rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <CheckCircle size={16} /> Code <strong>{appliedCoupon.code}</strong> Applied ({appliedCoupon.discount}% OFF)
-                      </div>
-                      <button onClick={removeCoupon} style={{ background: 'none', border: 'none', color: '#EF4444', fontWeight: 800, cursor: 'pointer', fontSize: '0.78rem' }}>
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
+                {/* Coupon Code Box inside Cart Drawer */}
+                <div style={{ background: 'var(--bg-surface)', padding: '14px', borderRadius: '16px', border: '1px solid var(--border-subtle)', marginTop: '6px' }}>
+                  {!appliedCoupon ? (
                     <form onSubmit={handleApplyCoupon} style={{ display: 'flex', gap: '8px' }}>
                       <input
                         type="text"
-                        placeholder="Enter coupon (e.g. SAIYAM10)"
+                        placeholder="Coupon code (SAIYAM10)"
                         value={couponInput}
                         onChange={(e) => setCouponInput(e.target.value)}
-                        style={{ flex: 1, padding: '8px 12px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF', fontSize: '0.85rem', outline: 'none', textTransform: 'uppercase' }}
+                        style={{
+                          flex: 1,
+                          padding: '8px 12px',
+                          background: 'var(--input-bg)',
+                          border: '1px solid var(--border-subtle)',
+                          borderRadius: '10px',
+                          color: '#FFF',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase'
+                        }}
                       />
-                      <button type="submit" className="btn-primary" style={{ padding: '8px 14px', fontSize: '0.82rem', borderRadius: '10px' }}>
+                      <button type="submit" className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.8rem' }}>
                         Apply
                       </button>
                     </form>
+                  ) : (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#FFFFFF', fontWeight: 800, fontSize: '0.85rem' }}>
+                      <span>🏷️ {appliedCoupon.code} ({appliedCoupon.discount}% OFF applied)</span>
+                      <button onClick={removeCoupon} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.78rem' }}>
+                        Remove
+                      </button>
+                    </div>
                   )}
 
                   {couponError && (
-                    <div style={{ color: '#EF4444', fontSize: '0.78rem', fontWeight: 700, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <AlertCircle size={12} /> {couponError}
+                    <div style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '6px', fontWeight: 700 }}>
+                      {couponError}
                     </div>
                   )}
                 </div>
@@ -280,107 +283,180 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
             )}
           </div>
 
-          {/* Footer Total Breakdown & Checkout */}
+          {/* Footer Summary & Checkout Trigger */}
           {cart.length > 0 && (
-            <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(7, 9, 19, 0.8)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  <span>Subtotal:</span>
-                  <span>₹{subtotal}</span>
-                </div>
+            <div style={{
+              padding: '20px',
+              background: 'var(--bg-surface)',
+              borderTop: '1px solid var(--border-subtle)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                <span>Subtotal</span>
+                <span>₹{subtotal}</span>
+              </div>
 
-                {appliedCoupon && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#10B981', fontWeight: 700 }}>
-                    <span>Discount ({appliedCoupon.code} - {appliedCoupon.discount}% OFF):</span>
-                    <span>-₹{discountAmount}</span>
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '6px' }}>
-                  <span style={{ color: '#FFF', fontWeight: 700, fontSize: '0.95rem' }}>Total Amount Payable:</span>
-                  <span style={{ color: '#FFF', fontWeight: 900, fontSize: '1.5rem' }}>₹{totalAmount}</span>
+              {discountAmount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: '#FFFFFF', fontWeight: 700 }}>
+                  <span>Discount ({appliedCoupon?.code})</span>
+                  <span>-₹{discountAmount}</span>
                 </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
+                <span>Total Payable</span>
+                <span>₹{totalAmount}</span>
               </div>
 
               <button
                 onClick={() => { setIsOpen(false); setIsCheckoutModalOpen(true); }}
                 className="btn-accent"
-                style={{ width: '100%', justifyContent: 'center', padding: '12px', borderRadius: '12px', fontSize: '0.95rem' }}
+                style={{ width: '100%', justifyContent: 'center', padding: '14px', borderRadius: '14px', fontSize: '0.95rem' }}
               >
-                Proceed to Checkout <ArrowRight size={16} />
+                Proceed to Checkout (₹{totalAmount}) <ArrowRight size={18} />
               </button>
             </div>
           )}
         </div>
       )}
 
-      {/* Checkout Modal */}
+      {/* FULL CHECKOUT & PAYMENT MODAL WITH DYNAMIC UPI QR CODE */}
       {isCheckoutModalOpen && (
         <div style={{
           position: 'fixed',
-          inset: 0,
-          zIndex: 1001,
-          background: 'rgba(0, 0, 0, 0.8)',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0, 0, 0, 0.88)',
           backdropFilter: 'blur(12px)',
+          zIndex: 99999,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '16px'
+          padding: '20px'
         }}>
-          <div className="glass-panel" style={{
-            width: '520px',
-            maxWidth: '100%',
+          <div className="glow-card-white" style={{
+            maxWidth: '540px',
+            width: '100%',
             maxHeight: '90vh',
             overflowY: 'auto',
             borderRadius: '24px',
-            padding: '24px',
-            border: '1px solid rgba(168, 85, 247, 0.4)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.8)'
+            padding: '28px',
+            position: 'relative'
           }}>
+            <button
+              onClick={() => setIsCheckoutModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                color: '#FFF',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={18} />
+            </button>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--heading-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CreditCard size={22} style={{ color: '#38BDF8' }} /> Checkout & Payment
-              </h2>
-              <button
-                onClick={() => { setIsCheckoutModalOpen(false); setPlacedOrder(null); }}
-                style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94A3B8', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {placedOrder ? (
-              /* Order Placed Success View */
-              <div style={{ textAlign: 'center' }}>
-                <CheckCircle size={48} style={{ color: '#10B981', margin: '0 auto 12px auto' }} />
-                <h3 style={{ color: '#FFF', fontSize: '1.3rem', fontWeight: 800, marginBottom: '4px' }}>Order Placed & Registered!</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px' }}>
-                  Order ID: <strong style={{ color: '#38BDF8' }}>{placedOrder.id}</strong> • Total Payable: <strong style={{ color: '#10B981' }}>₹{placedOrder.total}</strong>
-                </p>
-
-                {/* Dynamic UPI QR Code Box with Pre-filled Amount */}
-                <div style={{ background: '#FFF', borderRadius: '18px', padding: '18px', color: '#0F172A', marginBottom: '16px', border: '2px solid #00BAF2' }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '4px' }}>Scan QR Code via GPay / PhonePe / Paytm</div>
-                  <div style={{ fontSize: '0.78rem', color: '#10B981', fontWeight: 800, marginBottom: '12px' }}>
-                    ⚡ Exact Amount Pre-filled: ₹{placedOrder.total}
+            {!placedOrder ? (
+              <div>
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <div className="badge-glow" style={{ marginBottom: '8px' }}>
+                    <CreditCard size={14} style={{ color: '#FFFFFF' }} /> OFFICIAL UPI PAYMENT GATEWAY
                   </div>
-                  
-                  {/* Real-time Dynamic UPI QR Code Image */}
-                  <div style={{ width: '210px', height: '210px', margin: '0 auto 14px auto', borderRadius: '14px', overflow: 'hidden', border: '2px solid #00BAF2', background: '#FFF', padding: '8px' }}>
-                    <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiPayLink)}`} 
-                      alt={`UPI QR Code for ₹${placedOrder.total}`} 
-                      style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                      onError={(e) => {
-                        // Fallback to local QR image if offline
-                        e.target.src = "/payment-qr.jpg";
-                      }}
-                    />
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF' }}>Checkout Summary</h2>
+                  <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF', marginTop: '4px' }}>
+                    Total Amount: ₹{totalAmount.toLocaleString()}
+                  </div>
+                </div>
+
+                {/* DYNAMIC UPI QR CODE GENERATOR */}
+                <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.2)', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '10px' }}>
+                    Scan QR Code using Google Pay, PhonePe, Paytm or BHIM
+                  </div>
+
+                  <img
+                    src={qrCodeUrl}
+                    alt="UPI QR Code"
+                    style={{
+                      width: '180px',
+                      height: '180px',
+                      borderRadius: '14px',
+                      border: '3px solid #FFF',
+                      margin: '0 auto 12px auto',
+                      display: 'block'
+                    }}
+                  />
+
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+                    UPI ID: {upiId}
                   </div>
 
                   <a
                     href={upiPayLink}
+                    className="btn-primary"
+                    style={{
+                      display: 'inline-flex',
+                      padding: '8px 16px',
+                      borderRadius: '10px',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <CreditCard size={14} /> Pay via UPI App (₹{totalAmount})
+                  </a>
+                </div>
+
+                {/* Client Contact Form */}
+                <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Your Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Enter full name"
+                      value={clientInfo.name}
+                      onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>WhatsApp Mobile Number *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 9876543210"
+                      value={clientInfo.phone}
+                      onChange={(e) => setClientInfo({ ...clientInfo, phone: e.target.value })}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Email Address</label>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={clientInfo.email}
+                      onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
                     className="btn-accent"
                     style={{
                       width: '100%',
@@ -389,108 +465,72 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                       borderRadius: '12px',
                       fontWeight: 800,
                       fontSize: '0.92rem',
-                      textDecoration: 'none',
-                      background: 'linear-gradient(135deg, #00BAF2, #0052FF)'
+                      marginTop: '6px',
+                      cursor: 'pointer'
                     }}
                   >
-                    ⚡ Pay ₹{placedOrder.total} via UPI Link <ExternalLink size={15} />
-                  </a>
-
-                  <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '6px', fontWeight: 600 }}>
-                    UPI ID: <strong>{upiId}</strong>
-                  </div>
+                    Confirm Order & Submit Receipt <ArrowRight size={16} />
+                  </button>
+                </form>
+              </div>
+            ) : (
+              /* ORDER SUCCESS & RECEIPT SUBMISSION */
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  margin: '0 auto 16px auto'
+                }}>
+                  <CheckCircle size={32} />
                 </div>
 
-                {/* WhatsApp Receipt Button */}
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '4px' }}>
+                  Order Placed Successfully!
+                </h2>
+                <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
+                  Order ID: {placedOrder.id}
+                </div>
+
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px' }}>
+                  Please click below to send your payment screenshot to Saiyam on WhatsApp for quick confirmation!
+                </p>
+
                 <a
                   href={generateWhatsAppLink()}
                   target="_blank"
                   rel="noreferrer"
+                  className="btn-accent"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    width: '100%',
                     justifyContent: 'center',
-                    gap: '8px',
+                    padding: '14px',
+                    borderRadius: '14px',
                     background: '#25D366',
-                    color: '#FFF',
-                    padding: '12px 20px',
-                    borderRadius: '12px',
                     fontWeight: 800,
-                    fontSize: '0.92rem',
+                    fontSize: '0.95rem',
                     textDecoration: 'none',
-                    boxShadow: '0 8px 25px rgba(37, 211, 102, 0.4)'
+                    marginBottom: '12px'
                   }}
                 >
                   <MessageSquare size={18} /> Send Payment Screenshot on WhatsApp
                 </a>
-              </div>
-            ) : (
-              /* Client Information Form */
-              <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.04)', padding: '14px', borderRadius: '14px', border: '1px solid var(--glass-border)', marginBottom: '4px' }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>Order Breakdown</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FFF', fontWeight: 800, fontSize: '1.1rem' }}>
-                    <span>{cart.length} Item(s)</span>
-                    <span style={{ color: '#10B981' }}>₹{totalAmount} {appliedCoupon && <span style={{ fontSize: '0.78rem', color: '#C084FC' }}>({appliedCoupon.code} -10%)</span>}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Your Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter your name"
-                    value={clientInfo.name}
-                    onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>WhatsApp Mobile Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 9339256592"
-                    value={clientInfo.phone}
-                    onChange={(e) => setClientInfo({ ...clientInfo, phone: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Email Address (Optional)</label>
-                  <input
-                    type="email"
-                    placeholder="name@example.com"
-                    value={clientInfo.email}
-                    onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Special Instructions / Requirements</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Domain name preference, video ad topic, etc."
-                    value={clientInfo.notes}
-                    onChange={(e) => setClientInfo({ ...clientInfo, notes: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: 'var(--text-main)', outline: 'none', resize: 'vertical' }}
-                  />
-                </div>
 
                 <button
-                  type="submit"
-                  className="btn-primary"
-                  style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '0.95rem', marginTop: '6px' }}
+                  onClick={() => setIsCheckoutModalOpen(false)}
+                  className="btn-secondary"
+                  style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  Generate Payment QR & Link <ArrowRight size={16} />
+                  Done & Close Window
                 </button>
-              </form>
+              </div>
             )}
-
           </div>
         </div>
       )}

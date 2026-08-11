@@ -1,9 +1,28 @@
-/* App-level Layout & Responsive Utilities */
+/* App-level Layout & Mobile Responsiveness System */
 
 .grid-responsive-3 {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.grid-responsive-2 {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 28px;
+}
+
+/* Horizontal scroll container for admin sub-tabs & category pills */
+.scroll-pills-container {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 8px;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-pills-container::-webkit-scrollbar {
+  height: 4px;
 }
 
 /* Mobile-first Media Queries (Breakpoint: 768px) */
@@ -20,9 +39,28 @@
     display: flex !important;
   }
 
-  .grid-responsive-3 {
-    grid-template-columns: 1fr;
-    gap: 20px;
+  .grid-responsive-3,
+  .grid-responsive-2 {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .mobile-stack-vertical {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .mobile-padding-sm {
+    padding: 16px 12px !important;
+  }
+
+  .mobile-hero-padding {
+    padding-top: 100px !important;
+    padding-bottom: 40px !important;
   }
 }
 

@@ -259,22 +259,23 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Sub-Navigation Tabs */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px' }}>
+        {/* Sub-Navigation Tabs (Mobile Scrollable Pill Container) */}
+        <div className="scroll-pills-container" style={{ marginBottom: '24px' }}>
           <button
             onClick={() => setAdminTab('orders')}
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'orders' ? '1px solid rgba(168, 85, 247, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'orders' ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(56, 189, 248, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'orders' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'orders' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'orders' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'orders' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
             <Package size={16} /> Live Orders ({orders.length})
@@ -285,18 +286,19 @@ export default function Admin() {
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'courses' ? '1px solid rgba(56, 189, 248, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'courses' ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'courses' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'courses' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'courses' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'courses' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
-            <GraduationCap size={16} style={{ color: '#38BDF8' }} /> Courses Manager ({courses.length})
+            <GraduationCap size={16} /> Course Manager ({courses.length})
           </button>
 
           <button
@@ -304,18 +306,19 @@ export default function Admin() {
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'coupons' ? '1px solid rgba(192, 132, 252, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'coupons' ? 'linear-gradient(135deg, rgba(192, 132, 252, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'coupons' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'coupons' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'coupons' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'coupons' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
-            <Tag size={16} style={{ color: '#C084FC' }} /> Coupon Manager ({coupons.length})
+            <Tag size={16} /> Coupon Manager ({coupons.length})
           </button>
 
           <button
@@ -323,18 +326,19 @@ export default function Admin() {
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'inquiries' ? '1px solid rgba(56, 189, 248, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'inquiries' ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'inquiries' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'inquiries' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'inquiries' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'inquiries' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
-            <MessageSquare size={16} /> Form Inquiries ({inquiries.length})
+            <Mail size={16} /> Form Inquiries ({inquiries.length})
           </button>
 
           <button
@@ -342,18 +346,19 @@ export default function Admin() {
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'pricing' ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'pricing' ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(56, 189, 248, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'pricing' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'pricing' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'pricing' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'pricing' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
-            <DollarSign size={16} /> Pricing Manager
+            <IndianRupee size={16} /> Pricing Manager
           </button>
 
           <button
@@ -361,18 +366,19 @@ export default function Admin() {
             style={{
               padding: '10px 16px',
               borderRadius: '12px',
-              border: adminTab === 'media' ? '1px solid rgba(236, 72, 153, 0.5)' : '1px solid var(--glass-border)',
-              background: adminTab === 'media' ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(139, 92, 246, 0.2))' : 'var(--glass-bg)',
-              color: adminTab === 'media' ? 'var(--text-main)' : 'var(--text-muted)',
+              border: adminTab === 'media' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
+              background: adminTab === 'media' ? '#FFFFFF' : 'var(--glass-bg)',
+              color: adminTab === 'media' ? '#070913' : 'var(--text-muted)',
               fontWeight: 700,
               fontSize: '0.86rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              whiteSpace: 'nowrap'
             }}
           >
-            <Settings size={16} /> Media & System Links
+            <LinkIcon size={16} /> Media & Links
           </button>
         </div>
 

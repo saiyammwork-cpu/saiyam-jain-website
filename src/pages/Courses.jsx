@@ -123,7 +123,7 @@ export default function Courses({ setActiveTab }) {
         {/* Page Header */}
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
           <div className="badge-glow" style={{ marginBottom: '14px' }}>
-            <GraduationCap size={16} style={{ color: '#A855F7' }} /> SAIYAM JAIN ACADEMY & COURSES
+            <GraduationCap size={16} style={{ color: '#FFFFFF' }} /> SAIYAM JAIN ACADEMY & COURSES
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', fontWeight: 800 }}>
             Master AI & Web Dev <span className="text-gradient">Courses</span>
@@ -135,51 +135,48 @@ export default function Courses({ setActiveTab }) {
 
         {/* Dynamic Courses Grid */}
         {courses.length === 0 ? (
-          /* Empty State / Launch Announcement */
-          <div className="glass-panel" style={{
+          /* Empty State / Launch Announcement (Monochrome White & Black Glow Card) */
+          <div className="glow-card-white" style={{
             maxWidth: '680px',
             margin: '0 auto',
-            padding: '40px 24px',
+            padding: '44px 28px',
             borderRadius: '28px',
-            textAlign: 'center',
-            border: '1px solid rgba(168, 85, 247, 0.3)',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(56, 189, 248, 0.08))',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)'
+            textAlign: 'center'
           }}>
             <div style={{
               width: '64px',
               height: '64px',
               borderRadius: '20px',
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(56, 189, 248, 0.3))',
-              border: '1px solid rgba(168, 85, 247, 0.5)',
+              background: '#FFFFFF',
+              color: '#070913',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#38BDF8',
-              margin: '0 auto 20px auto'
+              margin: '0 auto 20px auto',
+              boxShadow: '0 0 20px rgba(255, 255, 255, 0.3)'
             }}>
               <GraduationCap size={32} />
             </div>
 
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '8px' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '10px' }}>
               New Courses Launching Soon! 🚀
             </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '24px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.94rem', lineHeight: '1.6', marginBottom: '28px' }}>
               Saiyam Jain is currently curating practical, high-value video masterclasses and guides on AI prompt architecture, free domain claiming tricks, and web dev. Courses added from the Admin Panel will appear right here instantly!
             </p>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button onClick={() => setActiveTab('sam')} className="btn-primary" style={{ padding: '12px 20px', fontSize: '0.9rem' }}>
+              <button onClick={() => setActiveTab('sam')} className="btn-primary" style={{ padding: '12px 22px', fontSize: '0.9rem' }}>
                 Ask SAM AI Agent Anything <ArrowRight size={16} />
               </button>
-              <button onClick={() => setActiveTab('prompts')} className="btn-secondary" style={{ padding: '12px 20px', fontSize: '0.9rem' }}>
+              <button onClick={() => setActiveTab('prompts')} className="btn-secondary" style={{ padding: '12px 22px', fontSize: '0.9rem' }}>
                 Explore Prompts Vault
               </button>
             </div>
           </div>
         ) : (
           /* Live Courses Display Grid */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
+          <div className="grid-responsive-3">
             {courses.map((course) => (
               <div 
                 key={course.id}
@@ -196,9 +193,9 @@ export default function Courses({ setActiveTab }) {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <span style={{
-                      background: 'rgba(139, 92, 246, 0.15)',
-                      border: '1px solid rgba(168, 85, 247, 0.4)',
-                      color: '#C084FC',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.25)',
+                      color: '#FFFFFF',
                       padding: '4px 10px',
                       borderRadius: '10px',
                       fontSize: '0.75rem',
@@ -207,12 +204,12 @@ export default function Courses({ setActiveTab }) {
                       {course.badge || 'Featured Course'}
                     </span>
 
-                    <span style={{ color: '#10B981', fontWeight: 900, fontSize: '1.1rem' }}>
+                    <span style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>
                       {course.price ? `₹${course.price}` : 'FREE'}
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '8px' }}>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
                     {course.title}
                   </h3>
 
@@ -251,24 +248,22 @@ export default function Courses({ setActiveTab }) {
           left: 0,
           width: '100vw',
           height: '100vh',
-          background: 'rgba(0, 0, 0, 0.85)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(0, 0, 0, 0.88)',
+          backdropFilter: 'blur(12px)',
           zIndex: 99999,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '20px'
         }}>
-          <div className="glass-panel" style={{
+          <div className="glow-card-white" style={{
             maxWidth: '520px',
             width: '100%',
             maxHeight: '90vh',
             overflowY: 'auto',
             borderRadius: '24px',
             padding: '28px',
-            position: 'relative',
-            border: '1px solid rgba(168, 85, 247, 0.4)',
-            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)'
+            position: 'relative'
           }}>
             <button
               onClick={closePaymentGateway}
@@ -295,13 +290,13 @@ export default function Courses({ setActiveTab }) {
               <div>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <div className="badge-glow" style={{ marginBottom: '8px' }}>
-                    <CreditCard size={14} style={{ color: '#38BDF8' }} /> COURSE PAYMENT GATEWAY
+                    <CreditCard size={14} style={{ color: '#FFFFFF' }} /> COURSE PAYMENT GATEWAY
                   </div>
-                  <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--heading-color)' }}>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF' }}>
                     {selectedCourse.title}
                   </h2>
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
-                    <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#10B981' }}>
+                    <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF' }}>
                       {finalPrice === 0 ? 'FREE' : `₹${finalPrice.toLocaleString()}`}
                     </span>
                     {discountAmount > 0 && (
@@ -314,7 +309,7 @@ export default function Courses({ setActiveTab }) {
 
                 {/* Coupon Code Section */}
                 {originalPrice > 0 && (
-                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '16px', border: '1px solid var(--glass-border)', marginBottom: '18px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '14px', borderRadius: '16px', border: '1px solid var(--border-subtle)', marginBottom: '18px' }}>
                     {!appliedCoupon ? (
                       <form onSubmit={handleApplyCoupon} style={{ display: 'flex', gap: '8px' }}>
                         <input
@@ -326,7 +321,7 @@ export default function Courses({ setActiveTab }) {
                             flex: 1,
                             padding: '8px 12px',
                             background: 'var(--input-bg)',
-                            border: '1px solid var(--glass-border)',
+                            border: '1px solid var(--border-subtle)',
                             borderRadius: '10px',
                             color: '#FFF',
                             fontSize: '0.85rem',
@@ -339,7 +334,7 @@ export default function Courses({ setActiveTab }) {
                         </button>
                       </form>
                     ) : (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#C084FC', fontWeight: 800, fontSize: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#FFFFFF', fontWeight: 800, fontSize: '0.85rem' }}>
                         <span>🏷️ {appliedCoupon.code} ({appliedCoupon.discount}% OFF applied)</span>
                         <button onClick={() => setAppliedCoupon(null)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.78rem' }}>
                           Remove
@@ -352,7 +347,7 @@ export default function Courses({ setActiveTab }) {
 
                 {/* UPI QR Code Section if price > 0 */}
                 {finalPrice > 0 && (
-                  <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '18px', border: '1px solid rgba(168, 85, 247, 0.3)', marginBottom: '20px' }}>
+                  <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.2)', marginBottom: '20px' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '10px' }}>
                       Scan QR Code using Google Pay, PhonePe, Paytm or BHIM
                     </div>
@@ -370,7 +365,7 @@ export default function Courses({ setActiveTab }) {
                       }}
                     />
 
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#38BDF8', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
                       UPI ID: {upiId}
                     </div>
 
@@ -400,7 +395,7 @@ export default function Courses({ setActiveTab }) {
                       placeholder="Enter full name"
                       value={clientInfo.name}
                       onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
                     />
                   </div>
 
@@ -412,7 +407,7 @@ export default function Courses({ setActiveTab }) {
                       placeholder="+91 9876543210"
                       value={clientInfo.phone}
                       onChange={(e) => setClientInfo({ ...clientInfo, phone: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
                     />
                   </div>
 
@@ -423,7 +418,7 @@ export default function Courses({ setActiveTab }) {
                       placeholder="your@email.com"
                       value={clientInfo.email}
                       onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
                     />
                   </div>
 
@@ -452,26 +447,26 @@ export default function Courses({ setActiveTab }) {
                   width: '60px',
                   height: '60px',
                   borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.2)',
-                  border: '1px solid rgba(16, 185, 129, 0.5)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#10B981',
+                  color: '#FFFFFF',
                   margin: '0 auto 16px auto'
                 }}>
                   <CheckCircle size={32} />
                 </div>
 
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--heading-color)', marginBottom: '4px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '4px' }}>
                   {finalPrice === 0 ? 'Course Access Unlocked!' : 'Payment Initiated!'}
                 </h2>
-                <div style={{ color: '#38BDF8', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
+                <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
                   Order ID: {placedCourseOrder.id}
                 </div>
 
                 {finalPrice > 0 && (
-                  <div style={{ background: 'rgba(255,255,255,0.04)', padding: '16px', borderRadius: '16px', border: '1px solid var(--glass-border)', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', marginBottom: '20px' }}>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '14px' }}>
                       Send your payment screenshot to Saiyam on WhatsApp to get quick verification & instant course support:
                     </p>
@@ -500,13 +495,13 @@ export default function Courses({ setActiveTab }) {
 
                 {/* UNLOCKED DIRECT COURSE LINK */}
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.15))',
-                  border: '1px solid rgba(168, 85, 247, 0.5)',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
                   padding: '20px',
                   borderRadius: '18px',
                   marginBottom: '20px'
                 }}>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#C084FC', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                     <GraduationCap size={16} /> OFFICIAL COURSE ACCESS LINK
                   </div>
 
@@ -534,7 +529,7 @@ export default function Courses({ setActiveTab }) {
                     className="btn-secondary"
                     style={{ width: '100%', justifyContent: 'center', padding: '8px', fontSize: '0.8rem' }}
                   >
-                    {linkCopied ? <Check size={14} style={{ color: '#10B981' }} /> : <Copy size={14} />}
+                    {linkCopied ? <Check size={14} style={{ color: '#FFFFFF' }} /> : <Copy size={14} />}
                     {linkCopied ? 'Link Copied to Clipboard!' : 'Copy Link URL'}
                   </button>
                 </div>

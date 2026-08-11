@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Sun, Moon, Sparkles, Bot, Flame, X, Menu } from 'lucide-react';
+import { ShoppingCart, Bot, Flame, X, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, cartCount = 0, setIsCartOpen }) {
+export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -32,7 +32,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
         right: 0,
         zIndex: 50,
         pointerEvents: 'none',
-        padding: '16px 24px'
+        padding: '16px 20px'
       }}
     >
       <div style={{
@@ -52,8 +52,10 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             alignItems: 'center',
             gap: '10px',
             cursor: 'pointer',
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border-subtle)',
+            background: 'var(--glass-bg)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid var(--glass-border)',
             padding: '6px 16px',
             borderRadius: '9999px',
             boxShadow: 'var(--shadow-sm)'
@@ -63,13 +65,13 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             src="/logo.png" 
             alt="saiyam.io Logo" 
             style={{ 
-              height: '28px',
+              height: '26px',
               width: 'auto',
               objectFit: 'contain',
-              filter: theme === 'dark' ? 'invert(1)' : 'none'
+              filter: 'invert(1)'
             }} 
           />
-          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
             saiyam.io
           </span>
         </div>
@@ -80,7 +82,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             background: 'var(--glass-bg)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--border-subtle)',
+            border: '1px solid var(--glass-border)',
             padding: '4px 8px',
             borderRadius: '9999px',
             boxShadow: 'var(--shadow-sm)',
@@ -100,8 +102,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                   padding: '8px 16px',
                   borderRadius: '9999px',
                   border: 'none',
-                  background: isActive ? 'var(--text-main)' : 'transparent',
-                  color: isActive ? 'var(--bg-main)' : 'var(--text-muted)',
+                  background: isActive ? '#FFFFFF' : 'transparent',
+                  color: isActive ? '#070913' : 'var(--text-muted)',
                   fontWeight: isActive ? 700 : 500,
                   fontSize: '0.85rem',
                   cursor: 'pointer',
@@ -117,8 +119,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                     width: '18px',
                     height: '18px',
                     borderRadius: '50%',
-                    background: isActive ? 'var(--bg-main)' : 'var(--text-main)',
-                    color: isActive ? 'var(--text-main)' : 'var(--bg-main)',
+                    background: isActive ? '#070913' : '#FFFFFF',
+                    color: isActive ? '#FFFFFF' : '#070913',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -130,8 +132,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 {item.badge && (
                   <span style={{
                     fontSize: '0.62rem',
-                    background: '#09090B',
-                    color: '#FFFFFF',
+                    background: '#FFFFFF',
+                    color: '#070913',
                     padding: '2px 6px',
                     borderRadius: '6px',
                     fontWeight: 800
@@ -144,7 +146,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
           })}
         </nav>
 
-        {/* RIGHT SECTION: CART & THEME TOGGLE */}
+        {/* RIGHT SECTION: CART & MOBILE TOGGLE */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           
           {/* Cart Icon Button */}
@@ -152,8 +154,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             onClick={() => setIsCartOpen(true)}
             style={{
               position: 'relative',
-              background: 'var(--text-main)',
-              color: 'var(--bg-main)',
+              background: '#FFFFFF',
+              color: '#070913',
               borderRadius: '50%',
               width: '40px',
               height: '40px',
@@ -188,34 +190,13 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             )}
           </button>
 
-          {/* Dark / Light Mode Button */}
-          <button
-            onClick={toggleTheme}
-            style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-main)',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-sm)'
-            }}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-main)',
+              background: 'var(--glass-bg)',
+              border: '1px solid var(--glass-border)',
+              color: '#FFFFFF',
               borderRadius: '50%',
               width: '40px',
               height: '40px',
@@ -242,7 +223,7 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
             pointerEvents: 'auto',
             background: 'var(--bg-surface)',
             borderRadius: '20px',
-            border: '1px solid var(--border-subtle)',
+            border: '1px solid var(--glass-border)',
             padding: '16px',
             marginTop: '10px',
             boxShadow: 'var(--shadow-lg)',
@@ -259,8 +240,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme, ca
                 padding: '12px 18px',
                 borderRadius: '12px',
                 border: 'none',
-                background: activeTab === item.id ? 'var(--text-main)' : 'var(--glass-pill)',
-                color: activeTab === item.id ? 'var(--bg-main)' : 'var(--text-main)',
+                background: activeTab === item.id ? '#FFFFFF' : 'var(--glass-pill)',
+                color: activeTab === item.id ? '#070913' : '#FFFFFF',
                 fontWeight: 600,
                 fontSize: '0.92rem',
                 textAlign: 'left',

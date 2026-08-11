@@ -14,9 +14,12 @@ import Admin from './pages/Admin';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('saiyam_theme') || 'dark';
-  });
+
+  // Permanent Dark Theme Enforcement
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('saiyam_theme', 'dark');
+  }, []);
 
   // Global Cart State
   const [cart, setCart] = useState(() => {
@@ -29,16 +32,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('saiyam_cart', JSON.stringify(cart));
   }, [cart]);
-
-  // Sync Theme to HTML Root
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('saiyam_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
 
   const addToCart = (newItem) => {
     setCart(prev => {
@@ -74,13 +67,11 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)', width: '100%', overflowX: 'hidden' }}>
       {/* Navigation Bar */}
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        theme={theme} 
-        toggleTheme={toggleTheme}
         cartCount={totalCartCount}
         setIsCartOpen={setIsCartOpen}
       />
