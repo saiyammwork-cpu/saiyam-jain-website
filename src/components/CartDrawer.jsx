@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Trash2, ArrowRight, CheckCircle, ExternalLink, QrCode, CreditCard, Sparkles, MessageSquare, Tag, Check, AlertCircle } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Trash2, ArrowRight, CheckCircle, CreditCard, Sparkles, MessageSquare, AlertCircle, ShieldCheck } from 'lucide-react';
 import { subscribeCoupons, createOrderInCloud } from '../services/db';
+import { executeRazorpayCheckout } from '../services/razorpay';
 
 export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActiveTab }) {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [clientInfo, setClientInfo] = useState({ name: '', phone: '', email: '', notes: '' });
   const [placedOrder, setPlacedOrder] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
   // Coupon Code State
   const [couponInput, setCouponInput] = useState('');
@@ -13,7 +16,6 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
   const [couponError, setCouponError] = useState('');
   const [availableCoupons, setAvailableCoupons] = useState([]);
 
-  const upiId = "BHARATPE09910636684@yesbankltd";
   const whatsappPhone = "919339256592";
 
   // Subscribe to Live Production Coupons
@@ -69,42 +71,69 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
     setCart(prev => prev.filter(item => item.id !== id));
   };
 
-  const handlePlaceOrder = (e) => {
+  // Launch Razorpay Standard Web Checkout Modal
+  const handleRazorpayCheckout = (e) => {
     e.preventDefault();
-    if (!clientInfo.name || !clientInfo.phone || cart.length === 0) return;
+    if (!clientInfo.name || !clientInfo.phone || cart.length === 0) {
+      setCheckoutError('Please enter your Name and WhatsApp phone number.');
+      return;
+    }
+
+    setCheckoutError('');
+    setIsProcessing(true);
 
     const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
     const dateStr = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
-    const newOrder = {
-      id: orderId,
-      date: dateStr,
-      client: clientInfo,
-      items: cart,
-      subtotal: subtotal,
-      discount: discountAmount,
-      couponUsed: appliedCoupon ? appliedCoupon.code : null,
-      total: totalAmount,
-      stage: 'Pending Payment',
-      upiId: upiId
-    };
+    executeRazorpayCheckout({
+      amount: totalAmount,
+      receipt: orderId,
+      name: 'Saiyam Jain | saiyam.io',
+      description: `Payment for ${cart.length} Service(s)`,
+      prefill: {
+        name: clientInfo.name,
+        email: clientInfo.email,
+        contact: clientInfo.phone
+      },
+      onSuccess: (paymentData) => {
+        setIsProcessing(false);
 
-    // Save order to Production Database (accessible instantly by Admin Panel on any device)
-    createOrderInCloud(newOrder);
+        const newOrder = {
+          id: orderId,
+          date: dateStr,
+          client: clientInfo,
+          items: cart,
+          subtotal: subtotal,
+          discount: discountAmount,
+          couponUsed: appliedCoupon ? appliedCoupon.code : null,
+          total: totalAmount,
+          stage: 'Paid via Razorpay',
+          paymentId: paymentData.paymentId,
+          razorpayOrderId: paymentData.orderId,
+          verified: true
+        };
 
-    setPlacedOrder(newOrder);
-    setCart([]);
+        // Save order to Cloud Database
+        createOrderInCloud(newOrder);
+
+        setPlacedOrder(newOrder);
+        setCart([]);
+      },
+      onFailure: (errorMsg) => {
+        setIsProcessing(false);
+        setCheckoutError(errorMsg || 'Payment failed or was declined. Please try again.');
+      },
+      onDismiss: () => {
+        setIsProcessing(false);
+      }
+    });
   };
 
   const generateWhatsAppLink = () => {
     if (!placedOrder) return '#';
-    const text = `👋 Hello Saiyam! I just placed an order on *saiyam.io*!\n\n📌 *Order ID*: ${placedOrder.id}\n👤 *Name*: ${placedOrder.client.name}\n📞 *Phone*: ${placedOrder.client.phone}\n💰 *Total Payable*: ₹${placedOrder.total}\n\nHere is my payment screenshot! Please verify and start work.`;
+    const text = `👋 Hello Saiyam! I just paid via Razorpay on *saiyam.io*!\n\n📌 *Order ID*: ${placedOrder.id}\n💳 *Payment ID*: ${placedOrder.paymentId}\n👤 *Name*: ${placedOrder.client.name}\n📞 *Phone*: ${placedOrder.client.phone}\n💰 *Amount Paid*: ₹${placedOrder.total}\n\nPayment verified automatically. Please confirm and start work!`;
     return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(text)}`;
   };
-
-  // Dynamic UPI URL for checkout modal
-  const upiPayLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Saiyam Jain')}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent('Website & AI Services')}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiPayLink)}`;
 
   return (
     <>
@@ -322,7 +351,7 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
         </div>
       )}
 
-      {/* FULL CHECKOUT & PAYMENT MODAL WITH DYNAMIC UPI QR CODE */}
+      {/* RAZORPAY STANDARD WEB CHECKOUT MODAL */}
       {isCheckoutModalOpen && (
         <div style={{
           position: 'fixed',
@@ -339,7 +368,7 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
           padding: '20px'
         }}>
           <div className="glow-card-white" style={{
-            maxWidth: '540px',
+            maxWidth: '500px',
             width: '100%',
             maxHeight: '90vh',
             overflowY: 'auto',
@@ -372,63 +401,44 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
               <div>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <div className="badge-glow" style={{ marginBottom: '8px' }}>
-                    <CreditCard size={14} style={{ color: '#FFFFFF' }} /> OFFICIAL UPI PAYMENT GATEWAY
+                    <ShieldCheck size={14} style={{ color: '#FFFFFF' }} /> SECURE RAZORPAY CHECKOUT
                   </div>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF' }}>Checkout Summary</h2>
                   <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF', marginTop: '4px' }}>
-                    Total Amount: ₹{totalAmount.toLocaleString()}
+                    Total Payable: ₹{totalAmount.toLocaleString()}
                   </div>
                 </div>
 
-                {/* DYNAMIC UPI QR CODE GENERATOR */}
-                <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.2)', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '10px' }}>
-                    Scan QR Code using Google Pay, PhonePe, Paytm or BHIM
+                {checkoutError && (
+                  <div style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid #EF4444',
+                    color: '#EF4444',
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <AlertCircle size={16} />
+                    <span>{checkoutError}</span>
                   </div>
+                )}
 
-                  <img
-                    src={qrCodeUrl}
-                    alt="UPI QR Code"
-                    style={{
-                      width: '180px',
-                      height: '180px',
-                      borderRadius: '14px',
-                      border: '3px solid #FFF',
-                      margin: '0 auto 12px auto',
-                      display: 'block'
-                    }}
-                  />
-
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
-                    UPI ID: {upiId}
-                  </div>
-
-                  <a
-                    href={upiPayLink}
-                    className="btn-primary"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '8px 16px',
-                      borderRadius: '10px',
-                      fontSize: '0.82rem',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    <CreditCard size={14} /> Pay via UPI App (₹{totalAmount})
-                  </a>
-                </div>
-
-                {/* Client Contact Form */}
-                <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Client Contact Details Form */}
+                <form onSubmit={handleRazorpayCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Your Name *</label>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Full Name *</label>
                     <input
                       type="text"
                       required
                       placeholder="Enter full name"
                       value={clientInfo.name}
                       onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '12px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: '#FFF', fontSize: '0.9rem' }}
                     />
                   </div>
 
@@ -440,7 +450,7 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                       placeholder="+91 9876543210"
                       value={clientInfo.phone}
                       onChange={(e) => setClientInfo({ ...clientInfo, phone: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '12px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: '#FFF', fontSize: '0.9rem' }}
                     />
                   </div>
 
@@ -451,55 +461,73 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                       placeholder="your@email.com"
                       value={clientInfo.email}
                       onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
-                      style={{ width: '100%', padding: '10px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#FFF' }}
+                      style={{ width: '100%', padding: '12px 14px', background: 'var(--input-bg)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: '#FFF', fontSize: '0.9rem' }}
                     />
+                  </div>
+
+                  <div style={{
+                    padding: '12px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    fontSize: '0.78rem',
+                    color: 'var(--text-muted)',
+                    textAlign: 'center'
+                  }}>
+                    🔒 Supports UPI, Credit/Debit Cards, NetBanking & Wallets via Razorpay Standard Checkout.
                   </div>
 
                   <button
                     type="submit"
+                    disabled={isProcessing}
                     className="btn-accent"
                     style={{
                       width: '100%',
                       justifyContent: 'center',
-                      padding: '12px',
-                      borderRadius: '12px',
-                      fontWeight: 800,
-                      fontSize: '0.92rem',
-                      marginTop: '6px',
-                      cursor: 'pointer'
+                      padding: '14px',
+                      borderRadius: '14px',
+                      fontWeight: 900,
+                      fontSize: '1rem',
+                      marginTop: '4px',
+                      cursor: isProcessing ? 'not-allowed' : 'pointer',
+                      opacity: isProcessing ? 0.7 : 1
                     }}
                   >
-                    Confirm Order & Submit Receipt <ArrowRight size={16} />
+                    <CreditCard size={18} />
+                    {isProcessing ? 'Opening Payment Gateway...' : `Pay via Razorpay (₹${totalAmount.toLocaleString()})`}
                   </button>
                 </form>
               </div>
             ) : (
-              /* ORDER SUCCESS & RECEIPT SUBMISSION */
+              /* ORDER SUCCESS & AUTOMATIC VERIFICATION SCREEN */
               <div style={{ textAlign: 'center' }}>
                 <div style={{
-                  width: '60px',
-                  height: '60px',
+                  width: '64px',
+                  height: '64px',
                   borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(34, 197, 94, 0.15)',
+                  border: '1px solid #22C55E',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
+                  color: '#22C55E',
                   margin: '0 auto 16px auto'
                 }}>
-                  <CheckCircle size={32} />
+                  <CheckCircle size={36} />
                 </div>
 
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '4px' }}>
-                  Order Placed Successfully!
+                  Payment Verified & Successful!
                 </h2>
-                <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
-                  Order ID: {placedOrder.id}
+
+                <div style={{ background: 'rgba(255,255,255,0.06)', padding: '12px', borderRadius: '12px', margin: '14px 0', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.88rem' }}>Order ID: {placedOrder.id}</div>
+                  <div style={{ color: '#22C55E', fontWeight: 800, fontSize: '0.82rem', marginTop: '4px' }}>Razorpay Payment ID: {placedOrder.paymentId}</div>
+                  <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem', marginTop: '6px' }}>Amount Paid: ₹{placedOrder.total}</div>
                 </div>
 
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px' }}>
-                  Please click below to send your payment screenshot to Saiyam on WhatsApp for quick confirmation!
+                  Your payment has been automatically verified. Click below to initiate instant order updates on WhatsApp!
                 </p>
 
                 <a
@@ -513,17 +541,18 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
                     padding: '14px',
                     borderRadius: '14px',
                     background: '#25D366',
+                    color: '#FFF',
                     fontWeight: 800,
                     fontSize: '0.95rem',
                     textDecoration: 'none',
                     marginBottom: '12px'
                   }}
                 >
-                  <MessageSquare size={18} /> Send Payment Screenshot on WhatsApp
+                  <MessageSquare size={18} /> Connect on WhatsApp
                 </a>
 
                 <button
-                  onClick={() => setIsCheckoutModalOpen(false)}
+                  onClick={() => { setIsCheckoutModalOpen(false); setPlacedOrder(null); }}
                   className="btn-secondary"
                   style={{ width: '100%', justifyContent: 'center' }}
                 >

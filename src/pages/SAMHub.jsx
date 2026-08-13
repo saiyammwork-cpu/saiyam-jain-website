@@ -89,19 +89,13 @@ Simply enter **SAIYAM10** in your cart drawer or checkout modal and tap **Apply*
    • E-Commerce Store: Custom quote on request!`;
     }
 
-    // 3. Payment & Dynamic UPI QR Code
-    if (q.includes('pay') || q.includes('qr') || q.includes('upi') || q.includes('bharatpe') || q.includes('bank')) {
-      return `💳 **UPI & Payment Integration**:
+    // 3. Razorpay Payment Gateway Integration
+    if (q.includes('pay') || q.includes('razorpay') || q.includes('card') || q.includes('upi') || q.includes('bank')) {
+      return `💳 **Razorpay Standard Web Checkout Integration**:
 
-• **Official UPI ID**: \`BHARATPE09910636684@yesbankltd\`
-• **Dynamic QR Code**: When you check out from your cart, SAM generates a real-time dynamic QR code that **automatically pre-fills the exact payable amount** in Google Pay, PhonePe, Paytm, or BHIM!
-• **Canara Bank Account**:
-  - Account Number: \`110265163648\`
-  - IFSC Code: \`CNRB0001426\`
-  - Account Holder: \`SAIYAM JAIN\`
-  - Mobile: \`+91 9339256592\`
-
-After paying, tap **"Send Payment Screenshot on WhatsApp"** to open WhatsApp directly with your pre-filled order receipt!`;
+• **Supported Payment Modes**: UPI (Google Pay, PhonePe, Paytm, BHIM), Credit Cards, Debit Cards, NetBanking, and Digital Wallets.
+• **Instant Verification**: Payments are automatically verified via HMAC-SHA256 signature verification endpoints on Vercel serverless functions.
+• **WhatsApp Confirmation**: Upon successful payment, your order ID and payment ID are automatically logged to our Cloud Database and an instant WhatsApp confirmation link is generated!`;
     }
 
     // 4. Free Domain Claiming Trick

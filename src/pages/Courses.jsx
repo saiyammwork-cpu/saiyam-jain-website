@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   GraduationCap, ExternalLink, Sparkles, ArrowRight, X, CheckCircle, 
-  CreditCard, QrCode, MessageSquare, Tag, Check, AlertCircle, Copy, Lock, ShieldCheck 
+  CreditCard, MessageSquare, Check, AlertCircle, Copy, ShieldCheck 
 } from 'lucide-react';
 import { subscribeCourses, subscribeCoupons, createOrderInCloud } from '../services/db';
+import { executeRazorpayCheckout } from '../services/razorpay';
 
 export default function Courses({ setActiveTab }) {
   const [courses, setCourses] = useState([]);
@@ -17,8 +18,9 @@ export default function Courses({ setActiveTab }) {
   const [availableCoupons, setAvailableCoupons] = useState([]);
   const [placedCourseOrder, setPlacedCourseOrder] = useState(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
-  const upiId = "BHARATPE09910636684@yesbankltd";
   const whatsappPhone = "919339256592";
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function Courses({ setActiveTab }) {
     setAppliedCoupon(null);
     setCouponInput('');
     setCouponError('');
+    setCheckoutError('');
   };
 
   const closePaymentGateway = () => {
@@ -54,10 +57,6 @@ export default function Courses({ setActiveTab }) {
     ? Math.round(originalPrice * (appliedCoupon.discount / 100))
     : 0;
   const finalPrice = Math.max(0, originalPrice - discountAmount);
-
-  // Dynamic UPI URL
-  const upiPayLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Saiyam Jain')}&am=${finalPrice}&cu=INR&tn=${encodeURIComponent(selectedCourse?.title || 'Course Access')}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiPayLink)}`;
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
@@ -77,33 +76,83 @@ export default function Courses({ setActiveTab }) {
 
   const handleProcessOrder = (e) => {
     e.preventDefault();
-    if (!clientInfo.name || !clientInfo.phone || !selectedCourse) return;
+    if (!clientInfo.name || !clientInfo.phone || !selectedCourse) {
+      setCheckoutError('Please enter your Name and WhatsApp mobile number.');
+      return;
+    }
+
+    setCheckoutError('');
 
     const orderId = 'CRS-ORD-' + Math.floor(100000 + Math.random() * 900000);
     const dateStr = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
-    const newOrder = {
-      id: orderId,
-      date: dateStr,
-      client: clientInfo,
-      items: [{ name: `Course: ${selectedCourse.title}`, price: originalPrice, quantity: 1 }],
-      subtotal: originalPrice,
-      discount: discountAmount,
-      couponUsed: appliedCoupon ? appliedCoupon.code : null,
-      total: finalPrice,
-      stage: finalPrice === 0 ? 'Completed' : 'Pending Payment',
-      upiId: upiId,
-      courseLink: selectedCourse.link
-    };
+    // For FREE courses, unlock access link immediately
+    if (finalPrice === 0) {
+      const freeOrder = {
+        id: orderId,
+        date: dateStr,
+        client: clientInfo,
+        items: [{ name: `Course: ${selectedCourse.title}`, price: 0, quantity: 1 }],
+        subtotal: 0,
+        discount: 0,
+        couponUsed: appliedCoupon ? appliedCoupon.code : null,
+        total: 0,
+        stage: 'Free Access Granted',
+        courseLink: selectedCourse.link
+      };
+      createOrderInCloud(freeOrder);
+      setPlacedCourseOrder(freeOrder);
+      return;
+    }
 
-    // Save order to Centralized Production Database
-    createOrderInCloud(newOrder);
-    setPlacedCourseOrder(newOrder);
+    // For Paid courses, trigger Razorpay Standard Checkout
+    setIsProcessing(true);
+
+    executeRazorpayCheckout({
+      amount: finalPrice,
+      receipt: orderId,
+      name: 'Saiyam Jain Academy',
+      description: `Course: ${selectedCourse.title}`,
+      prefill: {
+        name: clientInfo.name,
+        email: clientInfo.email,
+        contact: clientInfo.phone
+      },
+      onSuccess: (paymentData) => {
+        setIsProcessing(false);
+
+        const paidOrder = {
+          id: orderId,
+          date: dateStr,
+          client: clientInfo,
+          items: [{ name: `Course: ${selectedCourse.title}`, price: originalPrice, quantity: 1 }],
+          subtotal: originalPrice,
+          discount: discountAmount,
+          couponUsed: appliedCoupon ? appliedCoupon.code : null,
+          total: finalPrice,
+          stage: 'Paid via Razorpay',
+          paymentId: paymentData.paymentId,
+          razorpayOrderId: paymentData.orderId,
+          verified: true,
+          courseLink: selectedCourse.link
+        };
+
+        createOrderInCloud(paidOrder);
+        setPlacedCourseOrder(paidOrder);
+      },
+      onFailure: (errorMsg) => {
+        setIsProcessing(false);
+        setCheckoutError(errorMsg || 'Payment process failed. Please try again.');
+      },
+      onDismiss: () => {
+        setIsProcessing(false);
+      }
+    });
   };
 
   const generateWhatsAppLink = () => {
     if (!placedCourseOrder || !selectedCourse) return '#';
-    const text = `👋 Hello Saiyam! I just purchased access for the course: *${selectedCourse.title}*\n\n📌 *Order ID*: ${placedCourseOrder.id}\n👤 *Name*: ${placedCourseOrder.client.name}\n📞 *Phone*: ${placedCourseOrder.client.phone}\n💰 *Amount Payable*: ₹${placedCourseOrder.total}\n\nHere is my payment screenshot! Please verify and approve.`;
+    const text = `👋 Hello Saiyam! I just purchased access for course: *${selectedCourse.title}*\n\n📌 *Order ID*: ${placedCourseOrder.id}\n💳 *Payment ID*: ${placedCourseOrder.paymentId || 'FREE'}\n👤 *Name*: ${placedCourseOrder.client.name}\n📞 *Phone*: ${placedCourseOrder.client.phone}\n💰 *Amount*: ₹${placedCourseOrder.total}\n\nPayment verified via Razorpay!`;
     return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -135,7 +184,7 @@ export default function Courses({ setActiveTab }) {
 
         {/* Dynamic Courses Grid */}
         {courses.length === 0 ? (
-          /* Empty State / Launch Announcement (Monochrome White & Black Glow Card) */
+          /* Empty State */
           <div className="glow-card-white" style={{
             maxWidth: '680px',
             margin: '0 auto',
@@ -162,7 +211,7 @@ export default function Courses({ setActiveTab }) {
               New Courses Launching Soon! 🚀
             </h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.94rem', lineHeight: '1.6', marginBottom: '28px' }}>
-              Saiyam Jain is currently curating practical, high-value video masterclasses and guides on AI prompt architecture, free domain claiming tricks, and web dev. Courses added from the Admin Panel will appear right here instantly!
+              Saiyam Jain is currently curating practical masterclasses and guides on AI prompt architecture, free domain claiming tricks, and web dev. Courses added from the Admin Panel will appear right here instantly!
             </p>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -244,7 +293,7 @@ export default function Courses({ setActiveTab }) {
 
       </div>
 
-      {/* COURSE PAYMENT GATEWAY MODAL */}
+      {/* COURSE PAYMENT & ENROLLMENT MODAL */}
       {selectedCourse && (
         <div style={{
           position: 'fixed',
@@ -294,7 +343,7 @@ export default function Courses({ setActiveTab }) {
               <div>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <div className="badge-glow" style={{ marginBottom: '8px' }}>
-                    <CreditCard size={14} style={{ color: '#FFFFFF' }} /> COURSE PAYMENT GATEWAY
+                    <ShieldCheck size={14} style={{ color: '#FFFFFF' }} /> SECURE RAZORPAY CHECKOUT
                   </div>
                   <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF' }}>
                     {selectedCourse.title}
@@ -310,6 +359,25 @@ export default function Courses({ setActiveTab }) {
                     )}
                   </div>
                 </div>
+
+                {checkoutError && (
+                  <div style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid #EF4444',
+                    color: '#EF4444',
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <AlertCircle size={16} />
+                    <span>{checkoutError}</span>
+                  </div>
+                )}
 
                 {/* Coupon Code Section */}
                 {originalPrice > 0 && (
@@ -349,50 +417,10 @@ export default function Courses({ setActiveTab }) {
                   </div>
                 )}
 
-                {/* UPI QR Code Section if price > 0 */}
-                {finalPrice > 0 && (
-                  <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.2)', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '10px' }}>
-                      Scan QR Code using Google Pay, PhonePe, Paytm or BHIM
-                    </div>
-
-                    <img
-                      src={qrCodeUrl}
-                      alt="UPI QR Code"
-                      style={{
-                        width: '180px',
-                        height: '180px',
-                        borderRadius: '14px',
-                        border: '3px solid #FFF',
-                        margin: '0 auto 12px auto',
-                        display: 'block'
-                      }}
-                    />
-
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
-                      UPI ID: {upiId}
-                    </div>
-
-                    <a
-                      href={upiPayLink}
-                      className="btn-primary"
-                      style={{
-                        display: 'inline-flex',
-                        padding: '8px 16px',
-                        borderRadius: '10px',
-                        fontSize: '0.82rem',
-                        textDecoration: 'none'
-                      }}
-                    >
-                      <CreditCard size={14} /> Pay via UPI App (₹{finalPrice})
-                    </a>
-                  </div>
-                )}
-
-                {/* Client Information Form */}
+                {/* Student Registration Form */}
                 <form onSubmit={handleProcessOrder} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Your Name *</label>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '4px' }}>Full Name *</label>
                     <input
                       type="text"
                       required
@@ -428,6 +456,7 @@ export default function Courses({ setActiveTab }) {
 
                   <button
                     type="submit"
+                    disabled={isProcessing}
                     className="btn-accent"
                     style={{
                       width: '100%',
@@ -437,65 +466,39 @@ export default function Courses({ setActiveTab }) {
                       fontWeight: 800,
                       fontSize: '0.92rem',
                       marginTop: '6px',
-                      cursor: 'pointer'
+                      cursor: isProcessing ? 'not-allowed' : 'pointer',
+                      opacity: isProcessing ? 0.7 : 1
                     }}
                   >
-                    {finalPrice === 0 ? 'Access Course Link Now' : 'Confirm Payment & Get Link'} <ArrowRight size={16} />
+                    <CreditCard size={16} />
+                    {isProcessing ? 'Opening Razorpay Gateway...' : (finalPrice === 0 ? 'Access Course Link Now' : `Pay via Razorpay (₹${finalPrice.toLocaleString()})`)}
                   </button>
                 </form>
               </div>
             ) : (
-              /* ORDER PLACED & UNLOCKED LINK SCREEN */
+              /* UNLOCKED COURSE LINK SCREEN */
               <div style={{ textAlign: 'center' }}>
                 <div style={{
                   width: '60px',
                   height: '60px',
                   borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(34, 197, 94, 0.15)',
+                  border: '1px solid #22C55E',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
+                  color: '#22C55E',
                   margin: '0 auto 16px auto'
                 }}>
                   <CheckCircle size={32} />
                 </div>
 
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '4px' }}>
-                  {finalPrice === 0 ? 'Course Access Unlocked!' : 'Payment Initiated!'}
+                  {finalPrice === 0 ? 'Course Access Unlocked!' : 'Payment Verified & Access Unlocked!'}
                 </h2>
                 <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
                   Order ID: {placedCourseOrder.id}
                 </div>
-
-                {finalPrice > 0 && (
-                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', marginBottom: '20px' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '14px' }}>
-                      Send your payment screenshot to Saiyam on WhatsApp to get quick verification & instant course support:
-                    </p>
-
-                    <a
-                      href={generateWhatsAppLink()}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn-accent"
-                      style={{
-                        width: '100%',
-                        justifyContent: 'center',
-                        padding: '12px',
-                        borderRadius: '12px',
-                        background: '#25D366',
-                        fontWeight: 800,
-                        fontSize: '0.9rem',
-                        textDecoration: 'none',
-                        marginBottom: '10px'
-                      }}
-                    >
-                      <MessageSquare size={16} /> Send Screenshot on WhatsApp
-                    </a>
-                  </div>
-                )}
 
                 {/* UNLOCKED DIRECT COURSE LINK */}
                 <div style={{
@@ -537,6 +540,27 @@ export default function Courses({ setActiveTab }) {
                     {linkCopied ? 'Link Copied to Clipboard!' : 'Copy Link URL'}
                   </button>
                 </div>
+
+                <a
+                  href={generateWhatsAppLink()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-accent"
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    background: '#25D366',
+                    color: '#FFF',
+                    fontWeight: 800,
+                    fontSize: '0.9rem',
+                    textDecoration: 'none',
+                    marginBottom: '12px'
+                  }}
+                >
+                  <MessageSquare size={16} /> Send Confirmation on WhatsApp
+                </a>
 
                 <button onClick={closePaymentGateway} className="btn-secondary" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>
                   Close Gateway Window

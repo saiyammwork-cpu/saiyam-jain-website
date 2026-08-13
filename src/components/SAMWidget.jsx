@@ -6,7 +6,7 @@ export default function SAMWidget({ setActiveTab }) {
   const [messages, setMessages] = useState([
     {
       sender: 'sam',
-      text: "👋 Hi! I am **SAM**, Saiyam Jain's AI Solution Engine! Ask me about AI prompts, website packages, 10% coupon code **SAIYAM10**, dynamic UPI QR codes, or courses!"
+      text: "👋 Hi! I am **SAM**, Saiyam Jain's AI Solution Engine! Ask me about AI prompts, website packages, 10% coupon code **SAIYAM10**, Razorpay payments, or courses!"
     }
   ]);
   const [input, setInput] = useState('');
@@ -23,8 +23,8 @@ export default function SAMWidget({ setActiveTab }) {
 • Standard (₹8,999): 8 pages, 2-word domain, Free AI Chatbot, 1 Video Ad.
 • Premium (₹11,999): 10 pages, Premium minimal design, 3 Video Ads.`;
     }
-    if (q.includes('pay') || q.includes('qr') || q.includes('upi')) {
-      return `💳 **UPI & Payments**: Official UPI ID is \`BHARATPE09910636684@yesbankltd\`. Our cart generates a dynamic QR code that pre-fills the exact payable amount in GPay/PhonePe!`;
+    if (q.includes('pay') || q.includes('razorpay') || q.includes('card') || q.includes('upi')) {
+      return `💳 **Razorpay Payment Gateway**: We support Razorpay Standard Checkout! Pay seamlessly via UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, NetBanking, and Wallets with instant verification.`;
     }
     if (q.includes('course') || q.includes('learn')) {
       return `🎓 **Courses**: Explore AI & Web Dev courses on our Courses page (\`/courses\`)! Managed live via the Admin Panel.`;
