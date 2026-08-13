@@ -33,7 +33,10 @@ export const defaultFreeCourse = {
 const initialMasterState = {
   courses: [defaultFreeCourse],
   orders: [],
-  coupons: [{ code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' }],
+  coupons: [
+    { code: 'SAIYAM10', discount: 10, type: 'percentage', status: 'Active' },
+    { code: 'SAM99', discount: 99, type: 'percentage', status: 'Active' }
+  ],
   inquiries: [],
   pricing: {
     basicPrice: 4999,
@@ -246,7 +249,11 @@ export const subscribeCoupons = (callback) => {
     if (!isSubscribed) return;
     const dbData = await fetchCloudDB();
     if (dbData && dbData.coupons) {
-      callback(dbData.coupons);
+      let list = dbData.coupons;
+      if (!list.some(c => c.code.toUpperCase() === 'SAM99')) {
+        list = [...list, { code: 'SAM99', discount: 99, type: 'percentage', status: 'Active' }];
+      }
+      callback(list);
     } else {
       callback(initialMasterState.coupons);
     }

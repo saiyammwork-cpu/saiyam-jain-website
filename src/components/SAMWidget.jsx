@@ -14,8 +14,10 @@ export default function SAMWidget({ setActiveTab }) {
   const generateQuickAnswer = (query) => {
     const q = query.toLowerCase();
 
-    if (q.includes('coupon') || q.includes('discount') || q.includes('code') || q.includes('saiyam10')) {
-      return `🏷️ **10% OFF Coupon Code**: Use **SAIYAM10** in your cart during checkout for an instant 10% discount on any website or AI ad package!`;
+    if (q.includes('coupon') || q.includes('discount') || q.includes('code') || q.includes('saiyam10') || q.includes('sam99')) {
+      return `🏷️ **Active Coupon Codes**:
+• **SAM99**: Instant 99% OFF on all website packages & AI services!
+• **SAIYAM10**: Instant 10% OFF coupon code!`;
     }
     if (q.includes('price') || q.includes('cost') || q.includes('package') || q.includes('website')) {
       return `💰 **Website Plans**:
