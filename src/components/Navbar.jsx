@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Bot, X, Menu } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, Bot, X, Menu, User, UserCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import saiyamProfilePhoto from '../assets/saiyam_profile.jpg';
+import { subscribeAuth } from '../services/auth';
 
-export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCartOpen }) {
+export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCartOpen, openAuthModal }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsub = subscribeAuth(setUser);
+    return () => unsub();
+  }, []);
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -13,10 +19,16 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
     { id: 'courses', label: 'Courses' },
     { id: 'prompts', label: 'Prompts Vault', badge: 'Hot' },
     { id: 'sam', label: 'SAM AI Hub', isAi: true },
+    { id: 'dashboard', label: user ? `Dashboard (${user.name.split(' ')[0]})` : 'My Account / Orders', isAuth: true },
     { id: 'contact', label: 'Contact & Hire' }
   ];
 
   const handleNavClick = (id) => {
+    if (id === 'dashboard' && !user) {
+      setMenuOpen(false);
+      openAuthModal('signin');
+      return;
+    }
     setActiveTab(id);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -34,6 +46,38 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
         alignItems: 'center',
         gap: '10px'
       }}>
+        {/* User Account Button */}
+        <button
+          onClick={() => {
+            if (user) {
+              setActiveTab('dashboard');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              openAuthModal('signin');
+            }
+          }}
+          style={{
+            position: 'relative',
+            background: user ? '#FFFFFF' : '#070913',
+            color: user ? '#070913' : '#FFFFFF',
+            borderRadius: '50%',
+            width: '44px',
+            height: '44px',
+            border: user ? 'none' : '1px solid rgba(255, 255, 255, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontWeight: 800,
+            fontSize: '0.9rem',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.2)',
+            transition: 'all 0.2s ease'
+          }}
+          title={user ? `Dashboard (${user.name})` : "Sign In / Sign Up"}
+        >
+          {user ? (user.name ? user.name.charAt(0).toUpperCase() : <UserCheck size={18} />) : <User size={18} />}
+        </button>
+
         {/* Cart Icon Button */}
         <button
           onClick={() => setIsCartOpen(true)}
@@ -111,7 +155,7 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
               top: '76px',
               right: '20px',
               zIndex: 9998,
-              width: '300px',
+              width: '310px',
               maxWidth: 'calc(100vw - 40px)',
               background: 'rgba(17, 20, 34, 0.96)',
               backdropFilter: 'blur(24px)',
@@ -154,6 +198,8 @@ export default function Navbar({ activeTab, setActiveTab, cartCount = 0, setIsCa
                   <span style={{ fontSize: '0.62rem', background: '#FFFFFF', color: '#070913', padding: '2px 6px', borderRadius: '6px', fontWeight: 900 }}>
                     {item.badge}
                   </span>
+                ) : item.isAuth ? (
+                  <User size={14} style={{ opacity: 0.8 }} />
                 ) : null}
               </button>
             ))}

@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SAMWidget from './components/SAMWidget';
 import CartDrawer from './components/CartDrawer';
+import AuthModal from './components/AuthModal';
 
 import Home from './pages/Home';
 import AboutSaiyam from './pages/AboutSaiyam';
@@ -12,9 +13,17 @@ import Prompts from './pages/Prompts';
 import SAMHub from './pages/SAMHub';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import UserDashboard from './pages/UserDashboard';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalDefaultTab, setAuthModalDefaultTab] = useState('signin');
+
+  const openAuthModal = (tab = 'signin') => {
+    setAuthModalDefaultTab(tab);
+    setIsAuthModalOpen(true);
+  };
 
   // URL Path Synchronization & Permanent Dark Theme
   useEffect(() => {
@@ -24,6 +33,8 @@ export default function App() {
     const path = window.location.pathname.toLowerCase();
     if (path.includes('about')) {
       setActiveTab('about');
+    } else if (path.includes('dashboard')) {
+      setActiveTab('dashboard');
     }
   }, []);
 
@@ -67,6 +78,8 @@ export default function App() {
         return <SAMHub setActiveTab={setActiveTab} />;
       case 'contact':
         return <Contact setActiveTab={setActiveTab} />;
+      case 'dashboard':
+        return <UserDashboard setActiveTab={setActiveTab} openAuthModal={openAuthModal} />;
       case 'admin':
         return <Admin />;
       default:
@@ -82,6 +95,7 @@ export default function App() {
         setActiveTab={setActiveTab} 
         cartCount={totalCartCount}
         setIsCartOpen={setIsCartOpen}
+        openAuthModal={openAuthModal}
       />
 
       {/* Main Page View */}
@@ -96,6 +110,14 @@ export default function App() {
         isOpen={isCartOpen} 
         setIsOpen={setIsCartOpen} 
         setActiveTab={setActiveTab} 
+      />
+
+      {/* Sign In & Sign Up Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onAuthSuccess={() => setActiveTab('dashboard')} 
+        defaultTab={authModalDefaultTab}
       />
 
       {/* Global Floating AI Agent SAM Widget */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingCart, X, Plus, Minus, Trash2, ArrowRight, CheckCircle, CreditCard, Sparkles, MessageSquare, AlertCircle, ShieldCheck } from 'lucide-react';
 import { subscribeCoupons, createOrderInCloud } from '../services/db';
 import { executeRazorpayCheckout } from '../services/razorpay';
+import { getCurrentUser } from '../services/auth';
 
 export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActiveTab }) {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
@@ -9,6 +10,19 @@ export default function CartDrawer({ cart, setCart, isOpen, setIsOpen, setActive
   const [placedOrder, setPlacedOrder] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
+
+  // Auto-fill logged in user info
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      setClientInfo(prev => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [isCheckoutModalOpen, isOpen]);
 
   // Coupon Code State
   const [couponInput, setCouponInput] = useState('');

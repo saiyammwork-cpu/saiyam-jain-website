@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { subscribeCourses, subscribeCoupons, createOrderInCloud } from '../services/db';
 import { executeRazorpayCheckout } from '../services/razorpay';
+import { getCurrentUser } from '../services/auth';
 
 export default function Courses({ setActiveTab }) {
   const [courses, setCourses] = useState([]);
@@ -44,6 +45,15 @@ export default function Courses({ setActiveTab }) {
     setCouponInput('');
     setCouponError('');
     setCheckoutError('');
+
+    const user = getCurrentUser();
+    if (user) {
+      setClientInfo({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    }
   };
 
   const closePaymentGateway = () => {
